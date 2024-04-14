@@ -143,11 +143,14 @@ public class RouthHurwitzCriterion {
         LaguerreSolver solver = new LaguerreSolver();
         Complex[] roots = solver.solveAllComplex(polynomial.getCoefficients(), 0.0);
         for (Complex root : roots) {
-           {
+            if (root.getReal() > 0.0) {
                 double[] rootPair = {root.getReal(), root.getImaginary()};
                 rightSideRoots.add(rootPair);
             }
         }
+//        System.out.println("--------------------");
+//        System.out.println(rightSideRoots);
+//        System.out.println("--------------------------");
         return rightSideRoots;
     }
 
