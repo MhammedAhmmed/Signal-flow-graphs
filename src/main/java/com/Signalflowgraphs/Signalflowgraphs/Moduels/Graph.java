@@ -1,3 +1,4 @@
+
 package com.Signalflowgraphs.Signalflowgraphs.Moduels;
 
 import java.util.*;
@@ -46,6 +47,7 @@ public class Graph<T> {
         }
 
     }
+
     public List<Edge<T>> getAllEdges() {
         return allEdges;
     }
