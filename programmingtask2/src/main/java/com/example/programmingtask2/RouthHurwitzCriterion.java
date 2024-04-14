@@ -63,9 +63,14 @@ public class RouthHurwitzCriterion {
                 routhArray[i][j] = (d * b - a * c) / b;
             }
             boolean t=isFirstRowZero(routhArray,i);
-          if(t==true&&firsttime==1){
-              firsttime=0;
-              routhArray = zerorow(routhArray, i, n, m);}
+            if(t==true&&firsttime==1){
+                   firsttime=0;
+             //    System.out.println(i);
+                   routhArray = zerorow(routhArray, i, n, m);
+            }
+            else if(routhArray[i][0]==0){
+                    routhArray[i][0] = 0.1;
+              }
         }
         for( i=0;i<n;i++) {
             System.out.println();
