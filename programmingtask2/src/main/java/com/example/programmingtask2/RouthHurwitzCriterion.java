@@ -65,7 +65,6 @@ public class RouthHurwitzCriterion {
             boolean t=isFirstRowZero(routhArray,i);
             if(t==true&&firsttime==1){
                    firsttime=0;
-             //    System.out.println(i);
                    routhArray = zerorow(routhArray, i, n, m);
             }
             else if(routhArray[i][0]==0){
@@ -121,11 +120,8 @@ public class RouthHurwitzCriterion {
   for(int i=0;i<m-1;i++){
       routhtable[nrow][i]= routhtable[nrow-1][i]*h;
       h=h-2;
-    //  System.out.println(routhtable[nrow][i]);
   }
-      //  System.out.println(".........................................................");
-
-        return routhtable;
+    return routhtable;
     }
     public boolean isFirstRowZero(double[][] routhArray ,int i) {
         for (double element : routhArray[i]) {
@@ -136,39 +132,38 @@ public class RouthHurwitzCriterion {
         return true;
     }
 
-//    public List<double[]> findRightSideRoots() {
-//        List<double[]> rightSideRoots = new ArrayList<>();
-//
-//        // Create a polynomial from the coefficients
-//        double[] coefficientsCopy = Arrays.copyOf(coefficients, coefficients.length);
-//        PolynomialFunction polynomial = new PolynomialFunction(coefficientsCopy);
-//
-//        // Use LaguerreSolver to find roots
-//        LaguerreSolver solver = new LaguerreSolver();
-//        Complex[] roots = solver.solveAllComplex(polynomial.getCoefficients(), 0.0);
-//        for (Complex root : roots) {
-//            if (root.getImaginary() == 0.0 && root.getReal() > 0.0) {
-//                double[] rootPair = {root.getReal(), root.getImaginary()};
-//                rightSideRoots.add(rootPair);
-//            }
-//        }
-//
-//        return rightSideRoots;
-//    }
+    public List<double[]> findRightSideRoots() {
+        List<double[]> rightSideRoots = new ArrayList<>();
+
+        // Create a polynomial from the coefficients
+        double[] coefficientsCopy = Arrays.copyOf(this.coefficients,this.coefficients.length);
+        PolynomialFunction polynomial = new PolynomialFunction(coefficientsCopy);
+
+        // Use LaguerreSolver to find roots
+        LaguerreSolver solver = new LaguerreSolver();
+        Complex[] roots = solver.solveAllComplex(polynomial.getCoefficients(), 0.0);
+        for (Complex root : roots) {
+           {
+                double[] rootPair = {root.getReal(), root.getImaginary()};
+                rightSideRoots.add(rootPair);
+            }
+        }
+        return rightSideRoots;
+    }
 
 
     public static void main(String[] args) {
-        double[] coefficients = {-50,48,24,2,1};
+        double[] coefficients = {1,2,24,48,-50};
         RouthHurwitzCriterion obj = new RouthHurwitzCriterion(coefficients);
         if (obj.isStable()) {
             System.out.println("The system is stable.");
         } else {
             System.out.println("\nThe system is unstable.");
-//            List<double[]> rightSideRoots = obj.findRightSideRoots();
+            List<double[]> rightSideRoots = obj.findRightSideRoots();
             System.out.println("Roots in the right-half of the s-plane: "+ RouthHurwitzCriterion.num_of_roots+ " ");
-//            for (double[] rootPair : rightSideRoots) {
-//                System.out.println("Real part: " + rootPair[0] + ", Imaginary part: " + rootPair[1]);
-//            }
+            for (double[] rootPair : rightSideRoots) {
+                System.out.println("Real part: " + rootPair[0] + ", Imaginary part: " + rootPair[1]);
+            }
         }
     }
 
