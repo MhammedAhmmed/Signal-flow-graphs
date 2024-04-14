@@ -3,24 +3,29 @@
     <div class="container">
       <div class="control-window">
         <form @submit="onSubmit">
-          <label for="gaininput" style="margin-top: 10px;">gain</label>
+          <label for="gain" style="margin-top: 10px;"><strong>gain</strong></label>
           <input type="number"
            placeholder="enter the gain" 
            style="margin: 10px;" 
-           id="gaininput" 
+           id="gain" 
            required
            v-model="value"
-           name="gain">
+           name="gain"
+           ref="gainInput"
+           :readonly="!selected">
           <input type="submit" value="submit" style="float: right; margin-right: 20px;">
-          <input type="submit" value="calcen" style="float: right; margin-right: 5px;">
+          <button value="calcen" style="float: right; margin-right: 5px;">calcen</button>
         </form>
-        
-        
       </div>
       <div class="drawing-window">
         <div class="tool-bar">
-          <img src="./assets/pngwing.com.png" @click="(drawingNode) ? drawingNode = false : drawingNode = true" :class="{selected : drawingNode}">
-          <img src="./assets/right-arrow.png" @click="source = true; (drawingPath) ? drawingPath = false : drawingPath = true" :class="{selected : drawingPath}">
+          <img src="./assets/pngwing.com.png"
+           @click="(drawingNode) ? drawingNode = false : drawingNode = true" 
+           :class="{selected : drawingNode}">
+
+          <img src="./assets/Screenshot_2024-04-14_203519.png" 
+          @click="source = true; (drawingPath) ? drawingPath = false : drawingPath = true" 
+          :class="{selected : drawingPath}">
 
         </div>
         <v-stage :config="configKonva" style="border: 1px solid black;" @mousedown="handleClick">
@@ -69,12 +74,13 @@ export default {
   name: 'App',
   data() {
     return {
-      value: 0,
-      readonly: true,
+      value: 1,
       drawingNode: false,
       drawingPath: false,
       source: false,
       destination: false,
+      selected: false,
+      selectedID: null,
       startPoint: {
         x: null, 
         y: null
@@ -96,11 +102,17 @@ export default {
   methods: {
     onSubmit(e) {
       e.preventDefault();
-      this.paths[this.paths.length - 1].value = this.value;
-      this.value = 0;
+      for(var idx = 0; idx < this.paths.length; idx++) {
+          if(this.paths[idx].id === this.selectedID) {
+            this.paths[idx].stroke = 'black';
+            this.paths[idx].value = this.value;
+          }
+        }
+        this.value = 1;
+        this.selectedID = null;
     },
     isReadonly() {
-      return this.readonly;
+      return !this.selected;
     },
     match(x, y) {
       for(var i = 0; i < this.nodes.length; i++) {
@@ -114,6 +126,7 @@ export default {
     },
     count(x1, y1, x2, y2) {
       let counter = 0;
+      // let slope = (y2 - y1) / (x2 - x1);
       for(var i = 0; i < this.paths.length; i++) {
         if((x1 === this.paths[i].points[0] && y1 === this.paths[i].points[1] &&
           x2 === this.paths[i].points[4] && y2 === this.paths[i].points[5]) || 
@@ -122,6 +135,14 @@ export default {
             counter++;
           }
       }
+      // for(i = 0; i < this.nodes.length; i++) {
+      //   if((x1 === this.nodes[i].x && y1 === this.nodes[i].y) || (x2 === this.nodes[i].x && y2 === this.nodes[i].y))
+      //     continue;
+      //   if(slope >= Math.abs((y2 - this.nodes[i].y) / (x2 - this.nodes[i].x)) - 0.2 &&
+      //      slope <= Math.abs((y2 - this.nodes[i].y) / (x2 - this.nodes[i].x)) + 0.2) {
+      //       counter++;
+      //   }
+      // }
       return counter;
     },
     addNewPath() {
@@ -145,6 +166,7 @@ export default {
       
       console.log(x, y);
       let newPath = {
+        id: (this.paths.length).toString(),
         points: [Math.round(this.startPoint.x), Math.round(this.startPoint.y),
         Math.round(x), Math.round(y),
         Math.round(this.endPoint.x), Math.round(this.endPoint.y)],
@@ -154,7 +176,7 @@ export default {
         strokeWidth: 4,
         pointerLength: 20,
         pointerWidth: 20,
-        value: 0,
+        value: 1,
       }
       this.paths.push(newPath);
     },
@@ -165,6 +187,7 @@ export default {
       const pointerPosition = stage.getPointerPosition();
       if(this.drawingNode) {
         let newNode = {
+          id: (this.nodes.length).toString(),
           x: Math.round(pointerPosition.x),
           y: Math.round(pointerPosition.y),
           radius: 10,
@@ -194,6 +217,7 @@ export default {
             this.destination = false;
             this.endPoint = res;
             this.readonly = false;
+            this.drawingPath = false;
             this.addNewPath();
             return;
           }
@@ -202,8 +226,29 @@ export default {
           return;
         }
       }
-      else
+      else if(!this.selected) {
+        for(var i = 0; i < this.paths.length; i++) {
+          if(pointerPosition.x >= this.paths[i].points[2] - 20 && pointerPosition.x <= this.paths[i].points[2] + 20 &&
+          pointerPosition.y >= this.paths[i].points[3] - 20 && pointerPosition.y <= this.paths[i].points[3] + 20) {
+            this.paths[i].stroke = 'red';
+            this.selectedID = this.paths[i].id;
+            this.selected = true;
+          }
+        }
+      }
+      else if(this.selected) {
+        this.selected = false;
+        for(var idx = 0; idx < this.paths.length; idx++) {
+          if(this.paths[idx].id === this.selectedID) {
+            this.paths[idx].stroke = 'black';
+          }
+        }
+        this.selectedID = null;
+      }
+      else {
         return;
+      }
+        
     },
     
   },
@@ -229,6 +274,7 @@ export default {
   border: 1px solid black;
   border-radius: 5px;
   margin-right: 10px;
+  background-color:gainsboro;
 }
 
 .container .drawing-window {
@@ -243,10 +289,11 @@ export default {
   border: 1px solid black;
   border-radius: 5px;
   display: flex;
+  background-color: gainsboro
 }
 
 .container .drawing-window .tool-bar img {
-  width: 50px;
+  width: 60px;
   height: 50px;
   border-radius: 5px;
 }
