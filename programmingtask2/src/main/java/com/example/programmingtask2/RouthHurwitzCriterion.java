@@ -30,7 +30,7 @@ public class RouthHurwitzCriterion {
         int i;
         for(i = 0; i < m; ++i) {
             if (j < n) {
-                if (this.coefficients[j] >= 0.0) {
+                if (j < this.coefficients.length) {
                     routhArray[0][i] = this.coefficients[j];
                 } else {
                     routhArray[0][i] = 0.0;
@@ -44,7 +44,7 @@ public class RouthHurwitzCriterion {
 
         for(i = 0; i < m; ++i) {
             if (j < n) {
-                if (this.coefficients[j] >= 0.0) {
+                if (j < this.coefficients.length) {
                     routhArray[1][i] = this.coefficients[j];
                 } else {
                     routhArray[1][i] = 0.0;
@@ -53,8 +53,6 @@ public class RouthHurwitzCriterion {
 
             j += 2;
         }
-//        System.out.println( n );
-//        System.out.println( m );
         int firsttime=1;
         for(i = 2; i < n; ++i) {
             for(j = 0; j < m - 1; ++j) {
@@ -63,17 +61,17 @@ public class RouthHurwitzCriterion {
                 double c = j + 1 < routhArray[i - 1].length ? routhArray[i - 1][j + 1] : 0.0;
                 double d = i - 1 < routhArray.length && j + 1 < routhArray[i - 1].length ? routhArray[i - 2][j + 1] : 0.0;
                 routhArray[i][j] = (d * b - a * c) / b;
-          //      System.out.println( routhArray[i][j]);
-
             }
-      //      System.out.println("________________________________________");
             boolean t=isFirstRowZero(routhArray,i);
           if(t==true&&firsttime==1){
               firsttime=0;
-          //    System.out.println(i);
               routhArray = zerorow(routhArray, i, n, m);}
         }
-
+        for( i=0;i<n;i++) {
+            System.out.println();
+            for (j = 0; j < m; j++)
+                System.out.print(routhArray[i][j]+" ");
+        }
         List<Double> firstColumn = new ArrayList();
         double[][] var14 = routhArray;
         int var7 = routhArray.length;
@@ -155,7 +153,7 @@ public class RouthHurwitzCriterion {
 
 
     public static void main(String[] args) {
-        double[] coefficients = { 1, 2, 8, 12 ,20 , 16 ,16};
+        double[] coefficients = {-50,48,24,2,1};
         RouthHurwitzCriterion obj = new RouthHurwitzCriterion(coefficients);
         if (obj.isStable()) {
             System.out.println("The system is stable.");
