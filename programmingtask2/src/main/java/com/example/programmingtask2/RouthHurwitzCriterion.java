@@ -53,7 +53,9 @@ public class RouthHurwitzCriterion {
 
             j += 2;
         }
-
+//        System.out.println( n );
+//        System.out.println( m );
+        int firsttime=1;
         for(i = 2; i < n; ++i) {
             for(j = 0; j < m - 1; ++j) {
                 double a = routhArray[i - 2][0];
@@ -61,7 +63,15 @@ public class RouthHurwitzCriterion {
                 double c = j + 1 < routhArray[i - 1].length ? routhArray[i - 1][j + 1] : 0.0;
                 double d = i - 1 < routhArray.length && j + 1 < routhArray[i - 1].length ? routhArray[i - 2][j + 1] : 0.0;
                 routhArray[i][j] = (d * b - a * c) / b;
+          //      System.out.println( routhArray[i][j]);
+
             }
+      //      System.out.println("________________________________________");
+            boolean t=isFirstRowZero(routhArray,i);
+          if(t==true&&firsttime==1){
+              firsttime=0;
+          //    System.out.println(i);
+              routhArray = zerorow(routhArray, i, n, m);}
         }
 
         List<Double> firstColumn = new ArrayList();
@@ -103,6 +113,26 @@ public class RouthHurwitzCriterion {
 
         num_of_roots = count;
     }
+    public  double[][] zerorow( double[][] routhtable,int nrow,int n ,int m){
+        int h=((n-1)-nrow+1);
+  for(int i=0;i<m-1;i++){
+      routhtable[nrow][i]= routhtable[nrow-1][i]*h;
+      h=h-2;
+    //  System.out.println(routhtable[nrow][i]);
+  }
+      //  System.out.println(".........................................................");
+
+        return routhtable;
+    }
+    public boolean isFirstRowZero(double[][] routhArray ,int i) {
+        for (double element : routhArray[i]) {
+            if (element != 0.0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 //    public List<double[]> findRightSideRoots() {
 //        List<double[]> rightSideRoots = new ArrayList<>();
 //
@@ -125,7 +155,7 @@ public class RouthHurwitzCriterion {
 
 
     public static void main(String[] args) {
-        double[] coefficients = { 1.0, 10, 10, 72.0, 152.0, 240.0};
+        double[] coefficients = { 1, 2, 8, 12 ,20 , 16 ,16};
         RouthHurwitzCriterion obj = new RouthHurwitzCriterion(coefficients);
         if (obj.isStable()) {
             System.out.println("The system is stable.");
