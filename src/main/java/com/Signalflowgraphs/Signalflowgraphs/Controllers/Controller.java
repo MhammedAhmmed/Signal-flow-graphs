@@ -1,6 +1,6 @@
 package com.Signalflowgraphs.Signalflowgraphs.Controllers;
 
-import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.GraphOperations;
+import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.AllForwardPathsInDirectedGraph;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.Pair;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.SignalFlowGraph;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.SourceDestinations;
@@ -14,12 +14,12 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping
 public class Controller {
-    private final GraphOperations graphOperations;
+    private final AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph;
     private final SignalFlowGraph signalFlowGraph;
 
     @Autowired
-    public Controller(GraphOperations graphOperations, SignalFlowGraph signalFlowGraph) {
-        this.graphOperations = graphOperations;
+    public Controller(AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph, SignalFlowGraph signalFlowGraph) {
+        this.allForwardPathsInDirectedGraph = allForwardPathsInDirectedGraph;
         this.signalFlowGraph = signalFlowGraph;
     }
 
