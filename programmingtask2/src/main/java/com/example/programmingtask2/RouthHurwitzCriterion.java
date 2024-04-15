@@ -71,11 +71,11 @@ public class RouthHurwitzCriterion {
                     routhArray[i][0] = 0.1;
               }
         }
-        for( i=0;i<n;i++) {
-            System.out.println();
-            for (j = 0; j < m; j++)
-                System.out.print(routhArray[i][j]+" ");
-        }
+//        for( i=0;i<n;i++) {
+//            System.out.println();
+//            for (j = 0; j < m; j++)
+//                System.out.print(routhArray[i][j]+" ");
+//        }
         List<Double> firstColumn = new ArrayList();
         double[][] var14 = routhArray;
         int var7 = routhArray.length;
