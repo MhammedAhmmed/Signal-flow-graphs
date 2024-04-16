@@ -74,11 +74,11 @@ public class RouthHurwitzCriterion {
                     routhArray[i][0] = 0.1;
               }
            }
-    //    for( i=0;i<n;i++) {
-    //        System.out.println();
-    //        for (j = 0; j < m; j++)
-    //            System.out.print(routhArray[i][j]+" ");
-    //    }
+        for( i=0;i<n;i++) {
+            System.out.println();
+            for (j = 0; j < m; j++)
+                System.out.print(routhArray[i][j]+" ");
+        }
         List<Double> firstColumn = new ArrayList();
         double[][] var14 = routhArray;
         int var7 = routhArray.length;
@@ -92,20 +92,24 @@ public class RouthHurwitzCriterion {
     }
 
     private boolean allPositive(List<Double> arr) {
-        Iterator var2 = arr.iterator();
+        if (arr == null || arr.isEmpty()) {
+            return false;
+        }
 
-        double num;
-        do {
-            if (!var2.hasNext()) {
-                return true;
+        Iterator<Double> iterator = arr.iterator();
+        Double prev = iterator.next();
+
+        while (iterator.hasNext()) {
+            Double num = iterator.next();
+            if (prev * num < 0.0) {
+                return false;
             }
+            prev = num; 
+        }
 
-            num = (Double)var2.next();
-        } while(!(num < 0.0));
-
-        this.findNumberOfRightHalfPlanePoles(arr);
-        return false;
+        return true;
     }
+
 
     public void findNumberOfRightHalfPlanePoles(List<Double> lst) {
         int count = 0;
@@ -160,7 +164,7 @@ public class RouthHurwitzCriterion {
 
 
     public static void main(String[] args) {
-        double[] coefficients = {2,-2,1};
+        double[] coefficients = {-1,-1,-1};
         RouthHurwitzCriterion obj = new RouthHurwitzCriterion(coefficients);
         if (obj.isStable()) {
             System.out.println("The system is stable.");
