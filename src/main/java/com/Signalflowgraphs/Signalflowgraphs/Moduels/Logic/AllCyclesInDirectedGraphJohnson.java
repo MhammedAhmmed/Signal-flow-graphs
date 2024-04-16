@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.List;
 
 public class AllCyclesInDirectedGraphJohnson {
+<<<<<<< HEAD
     private Set<Vertex<Integer>> blockedSet;
     private Map<Vertex<Integer>, Set<Vertex<Integer>>> blockedMap;
     private Deque<Vertex<Integer>> stack;
@@ -26,6 +27,20 @@ public class AllCyclesInDirectedGraphJohnson {
     private List<List<List<Vertex<Integer>>>> twoNonTouchingCyclesNonTouchingPaths;
 
     private List<List<Integer>> twoNonTouchingCyclesNonTouchingPathsGains;
+=======
+    Set<Vertex<Integer>> blockedSet;
+    Map<Vertex<Integer>, Set<Vertex<Integer>>> blockedMap;
+    Deque<Vertex<Integer>> stack;
+    public List<List<Vertex<Integer>>> allCycles;
+
+    Graph<Integer> graph;
+
+    List<Edge<Integer>> edgeList;
+
+    public List<Integer>cyclesGains;
+
+    public List<List<Vertex<Integer>>>distinctCycles;
+>>>>>>> 4a2071dec2f7676c05ce37b279ba630a8b4ab4fe
 
     public List<List<Vertex<Integer>>> simpleCycles(Graph<Integer> graph) {
 
@@ -151,12 +166,35 @@ public class AllCyclesInDirectedGraphJohnson {
         return subGraph;
     }
 
+<<<<<<< HEAD
     public void findAllCycles (CycleGraphInitialization graphInitialization){
         Graph<Integer> graph = graphInitialization.getGraph();
 
         List<Edge<Integer>> edgeList = graphInitialization.getEdgeList();
         Map<Edge<Integer>, List<Integer>>map = new HashMap<>();
         for(int i = 0; i < graphInitialization.getNumberOfEdges(); i++){
+=======
+//    Graph initialization in cycles
+    public void graphInitialize (List<SourceDestinations> list){
+        graph = new Graph<>(true);
+        edgeList = new ArrayList<>();
+        for (SourceDestinations sourceDestinations : list){
+            for (Pair pair : sourceDestinations.getDestinations()){
+                edgeList.add(new Edge<>(
+                        new Vertex<>(sourceDestinations.getSource()),
+                        new Vertex<>(pair.getDestination()),
+                        true,
+                        pair.getWeight()
+                ));
+                graph.addEdge(sourceDestinations.getSource(), pair.getDestination());
+            }
+        }
+    }
+
+    public void findAllCycles (){
+        Map<Edge<Integer>, List<Integer>>map = new HashMap<>();
+        for(int i = 0; i < 10; i++){
+>>>>>>> 4a2071dec2f7676c05ce37b279ba630a8b4ab4fe
             List<Integer> list;
             if(!map.containsKey(edgeList.get(i))) {
                 list = new ArrayList<>();
@@ -170,7 +208,11 @@ public class AllCyclesInDirectedGraphJohnson {
 
 //        Set all distinct cycles using comparison
         distinctCycles = new ArrayList<>();
+<<<<<<< HEAD
         for(int i = 0; i < allCycles.size(); i++){
+=======
+        for(int i = 0; i < allCycles.size() - 1; i++){
+>>>>>>> 4a2071dec2f7676c05ce37b279ba630a8b4ab4fe
             boolean equal = false;
             for(int j = i + 1; j < allCycles.size(); j++){
                 if(allCycles.get(i) == allCycles.get(j)){
@@ -205,6 +247,7 @@ public class AllCyclesInDirectedGraphJohnson {
             cyclesGains.addAll(tempList);
         }
     }
+<<<<<<< HEAD
 
     public void findAllTwoNonTouchingCycles(){
         twoNonTouchingCycles = new ArrayList<>();
@@ -354,4 +397,6 @@ public class AllCyclesInDirectedGraphJohnson {
     public List<List<Integer>> getTwoNonTouchingCyclesNonTouchingPathsGains() {
         return twoNonTouchingCyclesNonTouchingPathsGains;
     }
+=======
+>>>>>>> 4a2071dec2f7676c05ce37b279ba630a8b4ab4fe
 }

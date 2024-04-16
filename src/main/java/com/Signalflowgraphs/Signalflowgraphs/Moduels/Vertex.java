@@ -1,8 +1,16 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4a2071dec2f7676c05ce37b279ba630a8b4ab4fe
 package com.Signalflowgraphs.Signalflowgraphs.Moduels;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4a2071dec2f7676c05ce37b279ba630a8b4ab4fe
 
 public class Vertex<T> {
     long id;
