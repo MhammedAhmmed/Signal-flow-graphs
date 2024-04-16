@@ -138,28 +138,29 @@ public class RouthHurwitzCriterion {
     public List<double[]> findRightSideRoots() {
         List<double[]> rightSideRoots = new ArrayList<>();
 
-        // Create a polynomial from the coefficients
-        double[] coefficientsCopy = Arrays.copyOf(this.coefficients,this.coefficients.length);
-        PolynomialFunction polynomial = new PolynomialFunction(coefficientsCopy);
-
-        // Use LaguerreSolver to find roots
+        if (coefficients == null || coefficients.length == 0) {
+            System.err.println("Invalid coefficients array.");
+            return rightSideRoots;
+        }
+        PolynomialFunction polynomial = new PolynomialFunction(coefficients);
         LaguerreSolver solver = new LaguerreSolver();
-        Complex[] roots = solver.solveAllComplex(polynomial.getCoefficients(), 0.0);
+        double[] helperArray = polynomial.getCoefficients();
+        Complex[] roots = solver.solveAllComplex(helperArray, 0.0);
+        double div=helperArray[0];
         for (Complex root : roots) {
             if (root.getReal() > 0.0) {
-                double[] rootPair = {root.getReal(), root.getImaginary()};
+                double[] rootPair = {root.getReal()/div, root.getImaginary()/div};
                 rightSideRoots.add(rootPair);
             }
+
         }
-//        System.out.println("--------------------");
-//        System.out.println(rightSideRoots);
-//        System.out.println("--------------------------");
+
         return rightSideRoots;
     }
 
 
     public static void main(String[] args) {
-        double[] coefficients = {1,0,3,0,2,5};
+        double[] coefficients = {2,-2,1};
         RouthHurwitzCriterion obj = new RouthHurwitzCriterion(coefficients);
         if (obj.isStable()) {
             System.out.println("The system is stable.");
