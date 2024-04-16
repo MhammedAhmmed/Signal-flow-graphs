@@ -14,7 +14,6 @@
            ref="gainInput"
            :readonly="!selected">
           <input type="submit" value="submit" style="float: right; margin-right: 20px;">
-          <button value="calcen" style="float: right; margin-right: 5px;">calcen</button>
         </form>
       </div>
       <div class="drawing-window">
@@ -81,6 +80,8 @@ export default {
       destination: false,
       selected: false,
       selectedID: null,
+      startNode: null,
+      endNode: null,
       startPoint: {
         x: null, 
         y: null
@@ -97,27 +98,61 @@ export default {
       
       nodes: [],
       paths: [],
+      graph: [],
+      SourceDestinations: {
+        source: null,
+        destinations: [],
+      },
     }
   },
   methods: {
     onSubmit(e) {
       e.preventDefault();
-      for(var idx = 0; idx < this.paths.length; idx++) {
-          if(this.paths[idx].id === this.selectedID) {
-            this.paths[idx].stroke = 'black';
-            this.paths[idx].value = this.value;
+      let idx = 0;
+      let commonPaths = [];
+      let indexOfSelected = 0;
+      for(var index = 0; index < this.paths.length; index++) {
+          if(this.paths[index].id === this.selectedID) {
+            this.paths[index].stroke = 'black';
+            this.paths[index].value = this.value;
+            idx = index;
           }
+      }
+      for(index = 0; index < this.paths.length; index++) {
+        if((this.paths[idx].source == this.paths[index].source) && (this.paths[idx].destination == this.paths[index].destination)) {
+          commonPaths.push(this.paths[index].id);
         }
-        this.value = 1;
-        this.selectedID = null;
+      }
+      console.log(commonPaths);
+      console.log(idx, typeof(idx));
+      console.log(this.paths[idx]);
+
+      for(index = 0; index < commonPaths.length; index++) {
+        if(commonPaths[index] === this.selectedID)
+          indexOfSelected = index;
+      }
+      for(let i = 0; i < this.graph[this.paths[idx].source].destinations.length; i++) {
+        if(this.graph[this.paths[idx].source].destinations[i].destination == this.paths[idx].destination) {
+          if(indexOfSelected === 0) {
+            this.graph[this.paths[idx].source].destinations[i].weight = this.value;
+            break;
+          }
+            
+          else
+            indexOfSelected--;
+        }
+      }
+      this.value = 1;
+      this.selectedID = null;
     },
     isReadonly() {
       return !this.selected;
     },
-    match(x, y) {
+    match(x, y, sourceDestination) {
       for(var i = 0; i < this.nodes.length; i++) {
         if(x >= this.nodes[i].x - this.nodes[i].radius && x <= this.nodes[i].x + this.nodes[i].radius &&
           y >= this.nodes[i].y - this.nodes[i].radius && y <= this.nodes[i].y + this.nodes[i].radius) {
+            (sourceDestination == 0) ? this.startNode = parseInt(this.nodes[i].id) : this.endNode = parseInt(this.nodes[i].id);
             return {x: this.nodes[i].x, 
                     y: this.nodes[i].y}
           }
@@ -147,12 +182,10 @@ export default {
     },
     addNewPath() {
       let counter = this.count(this.startPoint.x, this.startPoint.y, this.endPoint.x, this.endPoint.y);
-      console.log(counter)
       counter *= 50;
       let middleX = (this.startPoint.x + this.endPoint.x) / 2;
       let middleY = (this.startPoint.y + this.endPoint.y) / 2;
       let slope = - ((this.endPoint.x - this.startPoint.x) / (this.startPoint.y - this.endPoint.y));
-      console.log(slope);
       let x = 0
       let y = 0
       if(this.endPoint.x > this.startPoint.x) {
@@ -163,8 +196,6 @@ export default {
         x = middleX - (counter * Math.sqrt(1 / (1 + Math.pow(slope, 2))));
         y = middleY + slope * (counter * Math.sqrt(1 / (1 + Math.pow(slope, 2))));
       }
-      
-      console.log(x, y);
       let newPath = {
         id: (this.paths.length).toString(),
         points: [Math.round(this.startPoint.x), Math.round(this.startPoint.y),
@@ -177,8 +208,11 @@ export default {
         pointerLength: 20,
         pointerWidth: 20,
         value: 1,
+        source: this.startNode,
+        destination: this.endNode,
       }
       this.paths.push(newPath);
+      this.graph[this.startNode].destinations.push({destination: this.endNode, weight: 1})
     },
 
 
@@ -194,13 +228,16 @@ export default {
           fill: "white",
           stroke: "black",
           strokeWidth: 4,
-          draggable: true,
         }
         this.nodes.push(newNode)
+        this.graph.push({
+          source: this.nodes.length - 1,
+          destinations: [],
+        })
       }
       else if(this.drawingPath) {
         if(this.source) {
-          const res = this.match(pointerPosition.x, pointerPosition.y);
+          const res = this.match(pointerPosition.x, pointerPosition.y, 0);
           if(res !== null) {
             this.source = false;
             this.destination = true;
@@ -211,7 +248,7 @@ export default {
           return;
         }
         else if(this.destination){
-          const res = this.match(pointerPosition.x, pointerPosition.y);
+          const res = this.match(pointerPosition.x, pointerPosition.y, 1);
           if(res !== null) {
             this.source = false;
             this.destination = false;
