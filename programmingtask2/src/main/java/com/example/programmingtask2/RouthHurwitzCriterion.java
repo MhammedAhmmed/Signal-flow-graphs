@@ -53,6 +53,9 @@ public class RouthHurwitzCriterion {
 
             j += 2;
         }
+        if(routhArray[1][0]==0){
+            routhArray[1][0] = 0.1;
+      }
         int firsttime=1;
         for(i = 2; i < n; ++i) {
             for(j = 0; j < m - 1; ++j) {
@@ -70,12 +73,12 @@ public class RouthHurwitzCriterion {
             else if(routhArray[i][0]==0){
                     routhArray[i][0] = 0.1;
               }
-        }
-//        for( i=0;i<n;i++) {
-//            System.out.println();
-//            for (j = 0; j < m; j++)
-//                System.out.print(routhArray[i][j]+" ");
-//        }
+           }
+    //    for( i=0;i<n;i++) {
+    //        System.out.println();
+    //        for (j = 0; j < m; j++)
+    //            System.out.print(routhArray[i][j]+" ");
+    //    }
         List<Double> firstColumn = new ArrayList();
         double[][] var14 = routhArray;
         int var7 = routhArray.length;
@@ -156,7 +159,7 @@ public class RouthHurwitzCriterion {
 
 
     public static void main(String[] args) {
-        double[] coefficients = {1,2,24,48,-50};
+        double[] coefficients = {1,0,3,0,2,5};
         RouthHurwitzCriterion obj = new RouthHurwitzCriterion(coefficients);
         if (obj.isStable()) {
             System.out.println("The system is stable.");
