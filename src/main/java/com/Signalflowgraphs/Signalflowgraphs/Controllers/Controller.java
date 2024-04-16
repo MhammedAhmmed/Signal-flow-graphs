@@ -1,8 +1,7 @@
 package com.Signalflowgraphs.Signalflowgraphs.Controllers;
 
-import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.GraphOperations;
-import com.Signalflowgraphs.Signalflowgraphs.Moduels.Pair;
-import com.Signalflowgraphs.Signalflowgraphs.Moduels.SignalFlowGraph;
+import com.Signalflowgraphs.Signalflowgraphs.Moduels.CycleGraphInitialization;
+import com.Signalflowgraphs.Signalflowgraphs.Moduels.PathGraphInitialization;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.SourceDestinations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,18 +13,19 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping
 public class Controller {
-    private final GraphOperations graphOperations;
-    private final SignalFlowGraph signalFlowGraph;
+    private final PathGraphInitialization pathGraphInitialization;
+
+    private final CycleGraphInitialization cycleGraphInitialization;
 
     @Autowired
-    public Controller(GraphOperations graphOperations, SignalFlowGraph signalFlowGraph) {
-        this.graphOperations = graphOperations;
-        this.signalFlowGraph = signalFlowGraph;
+    public Controller(PathGraphInitialization pathGraphInitialization, CycleGraphInitialization cycleGraphInitialization) {
+        this.pathGraphInitialization = pathGraphInitialization;
+        this.cycleGraphInitialization = cycleGraphInitialization;
     }
 
-    @GetMapping ("/graph/{source}/{destination}")
-    public void getGraph(@RequestBody List<SourceDestinations> graph, @PathVariable int source, @PathVariable int destination){
-        signalFlowGraph.graphInitialize(graph);
-        Map<Integer, List<Pair>> initialized_graph = signalFlowGraph.getGraph();
+    @PostMapping ("/graph")
+    public void initializeGraph(@RequestBody List<SourceDestinations> list){
+        pathGraphInitialization.graphInitialize(list);
+        cycleGraphInitialization.graphInitialize(list);
     }
 }

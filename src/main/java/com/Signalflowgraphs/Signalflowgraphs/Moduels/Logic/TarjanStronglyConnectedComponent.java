@@ -1,4 +1,7 @@
-package org.example;
+package com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic;
+
+import com.Signalflowgraphs.Signalflowgraphs.Moduels.Graph;
+import com.Signalflowgraphs.Signalflowgraphs.Moduels.Vertex;
 
 import java.util.*;
 
@@ -74,15 +77,15 @@ public class TarjanStronglyConnectedComponent {
         //if vertex low time is same as visited time then this is start vertex for strongly connected component.
         //keep popping vertices out of stack still you find current vertex. They are all part of one strongly
         //connected component.
-        if (visitedTime.get(vertex) == lowTime.get(vertex)) {
-            Set<Vertex<Integer>> stronglyConnectedComponenet = new HashSet<>();
+        if (Objects.equals(visitedTime.get(vertex), lowTime.get(vertex))) {
+            Set<Vertex<Integer>> stronglyConnectedComponent = new HashSet<>();
             Vertex v;
             do {
                 v = stack.pollFirst();
                 onStack.remove(v);
-                stronglyConnectedComponenet.add(v);
+                stronglyConnectedComponent.add(v);
             } while (!vertex.equals(v));
-            result.add(stronglyConnectedComponenet);
+            result.add(stronglyConnectedComponent);
         }
     }
 }
