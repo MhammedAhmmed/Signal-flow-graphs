@@ -6,18 +6,26 @@ import java.util.*;
 import java.util.List;
 
 public class AllCyclesInDirectedGraphJohnson {
-    Set<Vertex<Integer>> blockedSet;
-    Map<Vertex<Integer>, Set<Vertex<Integer>>> blockedMap;
-    Deque<Vertex<Integer>> stack;
-    public List<List<Vertex<Integer>>> allCycles;
+    private Set<Vertex<Integer>> blockedSet;
+    private Map<Vertex<Integer>, Set<Vertex<Integer>>> blockedMap;
+    private Deque<Vertex<Integer>> stack;
+    private List<List<Vertex<Integer>>> allCycles;
 
-    Graph<Integer> graph;
+    private List<Integer>cyclesGains;
 
-    List<Edge<Integer>> edgeList;
+    private List<List<Vertex<Integer>>>distinctCycles;
 
-    public List<Integer>cyclesGains;
+    private List<List<Vertex<Integer>>> twoNonTouchingCycles;
 
-    public List<List<Vertex<Integer>>>distinctCycles;
+    private List<Integer> twoNonTouchingCyclesGains;
+
+    private List<List<List<Vertex<Integer>>>> allCyclesNonTouchingPaths;
+
+    private List<List<Integer>> cyclesNonTouchingPathsGains;
+
+    private List<List<List<Vertex<Integer>>>> twoNonTouchingCyclesNonTouchingPaths;
+
+    private List<List<Integer>> twoNonTouchingCyclesNonTouchingPathsGains;
 
     public List<List<Vertex<Integer>>> simpleCycles(Graph<Integer> graph) {
 
@@ -143,26 +151,12 @@ public class AllCyclesInDirectedGraphJohnson {
         return subGraph;
     }
 
-//    Graph initialization in cycles
-    public void graphInitialize (List<SourceDestinations> list){
-        graph = new Graph<>(true);
-        edgeList = new ArrayList<>();
-        for (SourceDestinations sourceDestinations : list){
-            for (Pair pair : sourceDestinations.getDestinations()){
-                edgeList.add(new Edge<>(
-                        new Vertex<>(sourceDestinations.getSource()),
-                        new Vertex<>(pair.getDestination()),
-                        true,
-                        pair.getWeight()
-                ));
-                graph.addEdge(sourceDestinations.getSource(), pair.getDestination());
-            }
-        }
-    }
+    public void findAllCycles (CycleGraphInitialization graphInitialization){
+        Graph<Integer> graph = graphInitialization.getGraph();
 
-    public void findAllCycles (){
+        List<Edge<Integer>> edgeList = graphInitialization.getEdgeList();
         Map<Edge<Integer>, List<Integer>>map = new HashMap<>();
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < graphInitialization.getNumberOfEdges(); i++){
             List<Integer> list;
             if(!map.containsKey(edgeList.get(i))) {
                 list = new ArrayList<>();
@@ -176,7 +170,7 @@ public class AllCyclesInDirectedGraphJohnson {
 
 //        Set all distinct cycles using comparison
         distinctCycles = new ArrayList<>();
-        for(int i = 0; i < allCycles.size() - 1; i++){
+        for(int i = 0; i < allCycles.size(); i++){
             boolean equal = false;
             for(int j = i + 1; j < allCycles.size(); j++){
                 if(allCycles.get(i) == allCycles.get(j)){
@@ -210,5 +204,154 @@ public class AllCyclesInDirectedGraphJohnson {
             }
             cyclesGains.addAll(tempList);
         }
+    }
+
+    public void findAllTwoNonTouchingCycles(){
+        twoNonTouchingCycles = new ArrayList<>();
+        twoNonTouchingCyclesGains = new ArrayList<>();
+        for (int i = 0; i < allCycles.size(); i++){
+            for(int j = i + 1; j < allCycles.size(); j++){
+                boolean isTouching = false;
+                for(Vertex<Integer> v : allCycles.get(i)){
+                    if(allCycles.get(j).contains(v)){
+                        isTouching = true;
+                        break;
+                    }
+                }
+                if(!isTouching) {
+                    twoNonTouchingCycles.add(allCycles.get(i));
+                    twoNonTouchingCycles.add(allCycles.get(j));
+                    twoNonTouchingCyclesGains.add(cyclesGains.get(i) * cyclesGains.get(j));
+                }
+            }
+        }
+    }
+
+    public void findAllCyclesNonTouchingPaths(AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph){
+        List<List<Integer>> paths = allForwardPathsInDirectedGraph.getAllPaths();
+        allCyclesNonTouchingPaths = new ArrayList<>();
+        cyclesNonTouchingPathsGains = new ArrayList<>();
+        for(List<Integer> path : paths){
+            List<List<Vertex<Integer>>> cycles = new ArrayList<>();
+            List<Integer> cyclesGainPath = new ArrayList<>();
+            for(int i = 0; i < allCycles.size(); i++){
+                boolean isTouching = false;
+                for(Integer value : path){
+                    if(allCycles.get(i).contains(new Vertex<Integer>(value))){
+                        isTouching = true;
+                        break;
+                    }
+                }
+                if (!isTouching) {
+                    cycles.add(allCycles.get(i));
+                    cyclesGainPath.add(cyclesGains.get(i));
+                }
+            }
+            allCyclesNonTouchingPaths.add(cycles);
+            cyclesNonTouchingPathsGains.add(cyclesGainPath);
+        }
+    }
+
+    public void findAllTwoNonTouchingCyclesPaths() {
+        twoNonTouchingCyclesNonTouchingPaths = new ArrayList<>();
+        twoNonTouchingCyclesNonTouchingPathsGains = new ArrayList<>();
+        for (int k = 0; k < allCyclesNonTouchingPaths.size(); k++){
+            List<List<Vertex<Integer>>> twoNonTouchingCyclesNonTouchingPath = new ArrayList<>();
+            List<Integer> twoNonTouchingCyclesNonTouchingPathGains = new ArrayList<>();
+            for (int i = 0; i < allCyclesNonTouchingPaths.get(k).size(); i++){
+                for(int j = i + 1; j < allCyclesNonTouchingPaths.get(k).size(); j++){
+                    boolean isTouching = false;
+                    for(Vertex<Integer> v : allCyclesNonTouchingPaths.get(k).get(i)){
+                        if(allCyclesNonTouchingPaths.get(k).get(j).contains(v)){
+                            isTouching = true;
+                            break;
+                        }
+                    }
+                    if(!isTouching) {
+                        twoNonTouchingCyclesNonTouchingPath.add(allCyclesNonTouchingPaths.get(k).get(i));
+                        twoNonTouchingCyclesNonTouchingPath.add(allCyclesNonTouchingPaths.get(k).get(j));
+                        twoNonTouchingCyclesNonTouchingPathGains.add(cyclesNonTouchingPathsGains.get(k).get(i) * cyclesNonTouchingPathsGains.get(k).get(j));
+                    }
+                }
+            }
+            twoNonTouchingCyclesNonTouchingPaths.add(twoNonTouchingCyclesNonTouchingPath);
+            twoNonTouchingCyclesNonTouchingPathsGains.add(twoNonTouchingCyclesNonTouchingPathGains);
+        }
+    }
+
+    public List<List<Integer>> getAllCycles() {
+        List<List<Integer>> allCyclesList = new ArrayList<>();
+        for (List<Vertex<Integer>> cycle : allCycles){
+            List<Integer> cycleList = new ArrayList<>();
+            for(Vertex vertex : cycle){
+                cycleList.add((int) vertex.getId());
+            }
+            allCyclesList.add(cycleList);
+        }
+        return allCyclesList;
+    }
+
+    public List<Integer> getCyclesGains() {
+        return cyclesGains;
+    }
+
+    public List<List<Integer>> getTwoNonTouchingCycles() {
+        List<List<Integer>> twoNonTouchingCyclesList = new ArrayList<>();
+        for (List<Vertex<Integer>> cycle : twoNonTouchingCycles){
+            List<Integer> cycleList = new ArrayList<>();
+            for(Vertex vertex : cycle){
+                cycleList.add((int) vertex.getId());
+            }
+            twoNonTouchingCyclesList.add(cycleList);
+        }
+        return twoNonTouchingCyclesList;
+    }
+
+    public List<Integer> getTwoNonTouchingCyclesGains() {
+        return twoNonTouchingCyclesGains;
+    }
+
+    public List<List<Vertex<Integer>>> getDistinctCycles() {
+        return distinctCycles;
+    }
+
+    public List<List<List<Integer>>> getAllCyclesNonTouchingPaths() {
+        List<List<List<Integer>>> allCyclesNonTouchingPathsList = new ArrayList<>();
+        for (List<List<Vertex<Integer>>> path : allCyclesNonTouchingPaths){
+            List<List<Integer>> allCyclesNonTouchingPath = new ArrayList<>();
+            for (List<Vertex<Integer>> cycle : path){
+                List<Integer> cycleNonTouchingPath = new ArrayList<>();
+                for(Vertex<Integer> vertex : cycle){
+                    cycleNonTouchingPath.add((int) vertex.getId());
+                }
+                allCyclesNonTouchingPath.add(cycleNonTouchingPath);
+            }
+            allCyclesNonTouchingPathsList.add(allCyclesNonTouchingPath);
+        }
+        return allCyclesNonTouchingPathsList;
+    }
+
+    public List<List<Integer>> getCyclesNonTouchingPathsGains() {
+        return cyclesNonTouchingPathsGains;
+    }
+
+    public List<List<List<Integer>>> getTwoNonTouchingCyclesNonTouchingPaths() {
+        List<List<List<Integer>>> twoNonTouchingCyclesNonTouchingPathsList = new ArrayList<>();
+        for (List<List<Vertex<Integer>>> path : twoNonTouchingCyclesNonTouchingPaths){
+            List<List<Integer>> twoNonTouchingCyclesPath = new ArrayList<>();
+            for (List<Vertex<Integer>> cycle : path) {
+                List<Integer> twoNonTouchingCyclePath = new ArrayList<>();
+                for (Vertex<Integer> vertex : cycle){
+                    twoNonTouchingCyclePath.add((int) vertex.getId());
+                }
+                twoNonTouchingCyclesPath.add(twoNonTouchingCyclePath);
+            }
+            twoNonTouchingCyclesNonTouchingPathsList.add(twoNonTouchingCyclesPath);
+        }
+        return twoNonTouchingCyclesNonTouchingPathsList;
+    }
+
+    public List<List<Integer>> getTwoNonTouchingCyclesNonTouchingPathsGains() {
+        return twoNonTouchingCyclesNonTouchingPathsGains;
     }
 }

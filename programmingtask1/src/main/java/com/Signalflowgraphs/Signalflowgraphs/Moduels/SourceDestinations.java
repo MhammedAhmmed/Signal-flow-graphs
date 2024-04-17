@@ -20,4 +20,12 @@ public class SourceDestinations {
     public void setDestinations(List<Pair> destinations) {
         this.destinations = destinations;
     }
+
+    @Override
+    public String toString() {
+        return "SourceDestinations{" +
+                "source=" + source +
+                ", destinations=" + destinations +
+                '}';
+    }
 }

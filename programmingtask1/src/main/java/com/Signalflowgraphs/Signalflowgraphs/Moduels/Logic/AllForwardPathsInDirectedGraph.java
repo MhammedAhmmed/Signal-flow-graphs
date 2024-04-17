@@ -1,6 +1,7 @@
 package com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic;
 
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.Pair;
+import com.Signalflowgraphs.Signalflowgraphs.Moduels.PathGraphInitialization;
 
 import java.util.*;
 
@@ -30,11 +31,12 @@ public class AllForwardPathsInDirectedGraph {
         visited[V] =false;
         path.remove(path.size()-1);
     }
-    public void findAllPaths(Map<Integer, List<Pair>> adj, int source, int destination){
+    public void findAllPaths(PathGraphInitialization graphInitialization, int source, int destination){
+        Map<Integer, List<Pair>> adj = graphInitialization.getGraph();
         allPaths = new ArrayList<>();
         allPathsGain = new ArrayList<>();
 
-        int N = adj.size();
+        int N = adj.size() + 1;
         boolean[] visited = new boolean[N];
         Arrays.fill(visited, false);
 
