@@ -15,4 +15,12 @@ public class Pair {
         this.destination = destination;
         this.weight = weight;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                destination + ", " +
+                weight +
+                '}';
+    }
 }
