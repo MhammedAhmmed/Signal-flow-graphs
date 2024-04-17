@@ -2,9 +2,11 @@ package com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic;
 
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.Pair;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.PathGraphInitialization;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class AllForwardPathsInDirectedGraph {
     private List<List<Integer>>allPaths;
     private List<Integer> allPathsGain;

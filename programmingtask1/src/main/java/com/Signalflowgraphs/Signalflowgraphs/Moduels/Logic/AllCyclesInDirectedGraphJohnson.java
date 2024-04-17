@@ -1,10 +1,12 @@
 package com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic;
 
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.*;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.List;
 
+@Service
 public class AllCyclesInDirectedGraphJohnson {
     private Set<Vertex<Integer>> blockedSet;
     private Map<Vertex<Integer>, Set<Vertex<Integer>>> blockedMap;

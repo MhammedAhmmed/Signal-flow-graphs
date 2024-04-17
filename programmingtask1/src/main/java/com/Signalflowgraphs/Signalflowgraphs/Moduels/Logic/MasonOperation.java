@@ -1,9 +1,11 @@
 package com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic;
 
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+@Service
 public class MasonOperation {
     private final AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph;
     private final AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson;
@@ -49,7 +51,7 @@ public class MasonOperation {
         return values;
     }
 
-    private List<Integer> deltasOfPaths (int numberOfPaths){
+    public List<Integer> getDeltasOfPaths (int numberOfPaths){
         List<Integer> individuals = getSumOfIndividualCyclesNonTouchingPaths();
         List<Integer> twos = getSumOfTwoNonTouchingCyclesNonTouchingPaths();
         List<Integer> deltaPaths = new ArrayList<>();
@@ -62,15 +64,19 @@ public class MasonOperation {
         return deltaPaths;
     }
 
+    public double getDelta(){
+        return  1 - getSumOfIndividualCycles() + getSumOfTwoNonTouchingCycles();
+    }
+
     public Double getTransferFunctionValue(){
-        double delta = 1 - getSumOfIndividualCycles() + getSumOfTwoNonTouchingCycles();
+        double delta = getDelta();
         List<Integer> pathsGains = allForwardPathsInDirectedGraph.getAllPathsGain();
         System.out.println("Paths gains: " + pathsGains);
         System.out.println("Delta: " + delta);
         System.out.println("Cycles non touching paths: " + getSumOfIndividualCyclesNonTouchingPaths());
         System.out.println("Two cycles non touching paths: " + getSumOfTwoNonTouchingCyclesNonTouchingPaths());
-        System.out.println("Delta of Paths : " + deltasOfPaths(pathsGains.size()));
-        List<Integer> deltaPaths = deltasOfPaths(pathsGains.size());
+        System.out.println("Delta of Paths : " + getDeltasOfPaths(pathsGains.size()));
+        List<Integer> deltaPaths = getDeltasOfPaths(pathsGains.size());
         double dominator = 0;
         for (int i = 0; i < pathsGains.size(); i++){
             dominator += pathsGains.get(i) * deltaPaths.get(i);

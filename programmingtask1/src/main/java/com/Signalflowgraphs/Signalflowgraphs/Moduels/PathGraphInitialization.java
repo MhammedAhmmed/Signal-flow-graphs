@@ -1,9 +1,12 @@
 package com.Signalflowgraphs.Signalflowgraphs.Moduels;
 
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class PathGraphInitialization {
     private Map<Integer, List<Pair>>adj;
 
