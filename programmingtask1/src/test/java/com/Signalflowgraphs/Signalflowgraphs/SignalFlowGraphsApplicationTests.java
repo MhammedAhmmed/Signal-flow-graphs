@@ -1,10 +1,10 @@
-package com.example.programmingtask2;
+package com.Signalflowgraphs.Signalflowgraphs;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Programmingtask2ApplicationTests {
+class SignalFlowGraphsApplicationTests {
 
 	@Test
 	void contextLoads() {

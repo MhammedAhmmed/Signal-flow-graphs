@@ -28,6 +28,4 @@ public class Controller {
         pathGraphInitialization.graphInitialize(list);
         cycleGraphInitialization.graphInitialize(list);
     }
-    
-
 }

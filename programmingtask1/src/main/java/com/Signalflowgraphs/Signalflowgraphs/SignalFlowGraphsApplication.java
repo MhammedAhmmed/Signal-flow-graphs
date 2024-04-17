@@ -1,13 +1,13 @@
-package com.example.programmingtask2;
+package com.Signalflowgraphs.Signalflowgraphs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Programmingtask2Application {
+public class SignalFlowGraphsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Programmingtask2Application.class, args);
+		SpringApplication.run(SignalFlowGraphsApplication.class, args);
 	}
 
 }
