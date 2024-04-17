@@ -15,6 +15,8 @@
            :readonly="!selected">
           <input type="submit" value="submit" style="float: right; margin-right: 20px;">
         </form>
+        <br>
+        <button @click="solve">solve</button>
       </div>
       <div class="drawing-window">
         <div class="tool-bar">
@@ -68,6 +70,7 @@
 </template>
 
 <script>
+//import axios from 'axios'
 
 export default {
   name: 'App',
@@ -286,6 +289,26 @@ export default {
         return;
       }
         
+    },
+    async solve() {
+      // axios.post(`http://localhost:8080/graph`, {
+      //   params: {
+      //     "list": this.graph,
+      //   }
+        
+      // }).then((res) => {
+      //   console.log(res);
+      // })
+      await fetch("http://localhost:8080/graph", {
+        method: "POST",
+        headers: {
+          Accept : "application/json",
+          "content-type" : "application/json"
+        },
+        body: JSON.stringify(this.graph),
+      }).catch((error) => {
+        console.error("Fetch error:", error);
+      });
     },
     
   },

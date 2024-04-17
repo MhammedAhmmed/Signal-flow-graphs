@@ -3,6 +3,14 @@ package com.Signalflowgraphs.Signalflowgraphs.Moduels;
 public class Pair {
     private int destination, weight;
 
+    public void setDestination(int destination) {
+        this.destination = destination;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
     public int getDestination() {
         return destination;
     }

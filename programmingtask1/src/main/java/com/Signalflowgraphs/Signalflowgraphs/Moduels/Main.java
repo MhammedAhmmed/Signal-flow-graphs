@@ -49,6 +49,7 @@ public class Main {
 //        get all paths
         paths.findAllPaths(pathGraphInitialization, 1, 8);
 
+
 //        get all cycles
         johnson.findAllCycles(cycleGraphInitialization);
 //        get all two non-touching cycles
