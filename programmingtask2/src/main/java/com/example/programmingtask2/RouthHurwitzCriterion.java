@@ -1,17 +1,14 @@
 package com.example.programmingtask2;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math3.analysis.solvers.NewtonSolver;
+import org.apache.commons.math3.analysis.solvers.*;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import org.apache.commons.math3.analysis.solvers.NewtonRaphsonSolver;
-import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.*;
 
 @Service
 public class RouthHurwitzCriterion {
@@ -139,27 +136,37 @@ public class RouthHurwitzCriterion {
         return true;
     }
 
-    public List<double[]> findRightSideRoots() {
+    public  List<double[]> findRightSideRoots() {
+
         List<double[]> rightSideRoots = new ArrayList<>();
 
         if (coefficients == null || coefficients.length == 0) {
             System.err.println("Invalid coefficients array.");
             return rightSideRoots;
         }
+
         PolynomialFunction polynomial = new PolynomialFunction(coefficients);
         LaguerreSolver solver = new LaguerreSolver();
-        double[] helperArray = polynomial.getCoefficients();
-        Complex[] roots = solver.solveAllComplex(helperArray, 0.0);
-        double div=helperArray[0];
+
+        // Reverse the coefficients array to pass them in ascending order of power
+        double[] reversedCoefficients = Arrays.copyOf(coefficients, coefficients.length);
+        ArrayUtils.reverse(reversedCoefficients);
+
+        Complex[] roots = solver.solveAllComplex(reversedCoefficients, 0.0);
+
         for (Complex root : roots) {
-            if (root.getReal() > 0.0) {
-                double[] rootPair = {root.getReal()/div, root.getImaginary()/div};
+            double d=root.getReal();
+            d=d*Math.pow(10,4);
+            d=Math.floor(d);
+            d=d/Math.pow(10,4);
+            if (d > 0.0) {
+                double[] rootPair = {root.getReal(), root.getImaginary()};
                 rightSideRoots.add(rootPair);
             }
-
         }
 
         return rightSideRoots;
+
     }
 
 

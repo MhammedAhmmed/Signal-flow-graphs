@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 public class controller {
     @GetMapping("/isStable")
-    @CrossOrigin(origins = "http://localhost:8083")
+    @CrossOrigin(origins = "http://localhost:8081")
     public int checkStability(@RequestParam double[] coefficients) {
         RouthHurwitzCriterion routhHurwitzCriterion = new RouthHurwitzCriterion(coefficients);
         if (routhHurwitzCriterion.isStable()) {
@@ -21,7 +21,7 @@ public class controller {
         }
     }
     @GetMapping("/showRoots")
-    @CrossOrigin(origins = "http://localhost:8083")
+    @CrossOrigin(origins = "http://localhost:8081")
     public List<List<Double>> showroots(@RequestParam double[] coefficients) {
         RouthHurwitzCriterion routhHurwitzCriterion = new RouthHurwitzCriterion(coefficients);
         List<double[]> roots = routhHurwitzCriterion.findRightSideRoots();
