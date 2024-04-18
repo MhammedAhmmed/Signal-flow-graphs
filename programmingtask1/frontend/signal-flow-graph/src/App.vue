@@ -103,6 +103,12 @@ export default {
         source: null,
         destinations: [],
       },
+
+      allPaths: [],
+      individualCycles: [],
+      nonTouchingCycles: [],
+      deltasOfPaths: [],
+      transferFunction: null,
     }
   },
   methods: {

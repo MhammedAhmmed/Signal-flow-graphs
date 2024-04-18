@@ -41,7 +41,7 @@ public class Controller {
     }
 
     @GetMapping ("/graph/paths/{source}/{destination}")
-    public List<List<Integer>> getPaths(int source, int destination){
+    public List<List<Integer>> getPaths(@PathVariable int source, @PathVariable int destination){
         allForwardPathsInDirectedGraph.findAllPaths(pathGraphInitialization, source, destination);
         return allForwardPathsInDirectedGraph.getAllPaths();
     }
