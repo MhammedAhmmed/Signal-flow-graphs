@@ -15,6 +15,7 @@
            :readonly="!selected">
           <input type="submit" value="submit" style="float: right; margin-right: 20px;">
         </form>
+        <button @click="solve">solve</button>
       </div>
       <div class="drawing-window">
         <div class="tool-bar">
@@ -68,6 +69,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 
 export default {
   name: 'App',
@@ -129,9 +132,9 @@ export default {
           commonPaths.push(this.paths[index].id);
         }
       }
-      console.log(commonPaths);
-      console.log(idx, typeof(idx));
-      console.log(this.paths[idx]);
+      // console.log(commonPaths);
+      // console.log(idx, typeof(idx));
+      // console.log(this.paths[idx]);
 
       for(index = 0; index < commonPaths.length; index++) {
         if(commonPaths[index] === this.selectedID)
@@ -176,19 +179,24 @@ export default {
             counter++;
           }
       }
-      // for(i = 0; i < this.nodes.length; i++) {
-      //   if((x1 === this.nodes[i].x && y1 === this.nodes[i].y) || (x2 === this.nodes[i].x && y2 === this.nodes[i].y))
-      //     continue;
-      //   if(slope >= Math.abs((y2 - this.nodes[i].y) / (x2 - this.nodes[i].x)) - 0.2 &&
-      //      slope <= Math.abs((y2 - this.nodes[i].y) / (x2 - this.nodes[i].x)) + 0.2) {
-      //       counter++;
-      //   }
-      // }
+      let first = 0;
+      let second = 0; 
+      for(i = 0; i < this.nodes.length; i++) {
+        if(x1 === this.nodes[i].x && y1 === this.nodes[i].y)
+          first = parseInt(this.nodes[i].id);
+        if(x2 === this.nodes[i].x && y2 === this.nodes[i].y)
+          second = parseInt(this.nodes[i].id);
+      }
+      counter += Math.abs(second - first) - 1;
       return counter;
     },
     addNewPath() {
       let counter = this.count(this.startPoint.x, this.startPoint.y, this.endPoint.x, this.endPoint.y);
       counter *= 50;
+      if(this.startPoint.y === this.endPoint.y) {
+        this.nodes[this.endNode].y--;
+        this.endPoint.y--;
+      }
       let middleX = (this.startPoint.x + this.endPoint.x) / 2;
       let middleY = (this.startPoint.y + this.endPoint.y) / 2;
       let slope = - ((this.endPoint.x - this.startPoint.x) / (this.startPoint.y - this.endPoint.y));
@@ -292,6 +300,61 @@ export default {
         return;
       }
         
+    },
+    async solve() {
+      // axios.post(`http://localhost:8080/graph`, {
+      //   params: {
+      //     "list": this.graph,
+      //   }
+        
+      // }).then((res) => {
+      //   console.log(res);
+      // })
+      await fetch("http://localhost:8080/graph", {
+        method: "POST",
+        headers: {
+          Accept : "application/json",
+          "content-type" : "application/json"
+        },
+        body: JSON.stringify(this.graph),
+      }).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/paths/${0}/${this.nodes.length - 1}`).then((res => {
+        this.allPaths = res.data;
+        console.log(this.allPaths);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/paths/individual/cycles`).then((res => {
+        this.individualCycles = res.data;
+        console.log(this.individualCycles);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/non/touching/cycles`).then((res => {
+        this.nonTouchingCycles = res.data;
+        console.log(this.nonTouchingCycles);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/deltas`).then((res => {
+        this.deltasOfPaths = res.data;
+        console.log(this.deltasOfPaths);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/transfer/function`).then((res => {
+        this.transferFunction = res.data;
+        console.log(this.transferFunction);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
     },
     
   },
