@@ -32,13 +32,32 @@ public class Controller {
         this.allForwardPathsInDirectedGraph = allForwardPathsInDirectedGraph;
         this.allCyclesInDirectedGraphJohnson = allCyclesInDirectedGraphJohnson;
         this.mason = new MasonOperation(this.allForwardPathsInDirectedGraph, this.allCyclesInDirectedGraphJohnson);
+
     }
 
     @PostMapping ("/graph")
     public void initializeGraph(@RequestBody List<SourceDestinations> list){
         pathGraphInitialization.graphInitialize(list);
         cycleGraphInitialization.graphInitialize(list);
+//        allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
+//        System.out.println("------------------------------------------------------------------------------");
+//        List<List<Integer>> allCycles = allCyclesInDirectedGraphJohnson.getAllCycles();
+//        List<Integer> allCyclesGains = allCyclesInDirectedGraphJohnson.getCyclesGains();
+//        System.out.println("Cycles:");
+//        for(int i = 0; i < allCycles.size(); i++){
+//            System.out.println(allCycles.get(i) + " " + allCyclesGains.get(i));
+//        }
+//        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
+        //get all cycles
+        allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
+//        get all two non-touching cycles
+        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
+//        get all cycles non touching paths
+//        allCyclesInDirectedGraphJohnson.findAllCyclesNonTouchingPaths(allForwardPathsInDirectedGraph);
+////        get all two non-touching cycles paths
+//        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCyclesPaths();
     }
+
 
     @GetMapping ("/graph/paths/{source}/{destination}")
     public List<List<Integer>> getPaths(@PathVariable int source, @PathVariable int destination){
@@ -48,11 +67,13 @@ public class Controller {
 
     @GetMapping ("/graph/individual/cycles")
     public List<List<Integer>> getIndividualCycles(){
+        //allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
         return allCyclesInDirectedGraphJohnson.getAllCycles();
     }
 
     @GetMapping ("/graph/non/touching/cycles")
     public List<List<Integer>> getNonTouchingCycles(){
+        //allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
         return allCyclesInDirectedGraphJohnson.getTwoNonTouchingCycles();
     }
 
@@ -65,6 +86,8 @@ public class Controller {
 
     @GetMapping ("/graph/transfer/function")
     public double getTransferFunction(){
+        allCyclesInDirectedGraphJohnson.findAllCyclesNonTouchingPaths(allForwardPathsInDirectedGraph);
+        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCyclesPaths();
         return mason.getTransferFunctionValue();
     }
 }

@@ -285,7 +285,7 @@ public class AllCyclesInDirectedGraphJohnson {
         List<List<Integer>> allCyclesList = new ArrayList<>();
         for (List<Vertex<Integer>> cycle : allCycles){
             List<Integer> cycleList = new ArrayList<>();
-            for(Vertex vertex : cycle){
+            for(Vertex<Integer> vertex : cycle){
                 cycleList.add((int) vertex.getId());
             }
             allCyclesList.add(cycleList);
@@ -301,7 +301,7 @@ public class AllCyclesInDirectedGraphJohnson {
         List<List<Integer>> twoNonTouchingCyclesList = new ArrayList<>();
         for (List<Vertex<Integer>> cycle : twoNonTouchingCycles){
             List<Integer> cycleList = new ArrayList<>();
-            for(Vertex vertex : cycle){
+            for(Vertex<Integer> vertex : cycle){
                 cycleList.add((int) vertex.getId());
             }
             twoNonTouchingCyclesList.add(cycleList);

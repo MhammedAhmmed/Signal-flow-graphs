@@ -328,7 +328,7 @@ export default {
         console.error("Fetch error:", error);
       });
 
-      await axios.get(`http://localhost:8080/graph/paths/individual/cycles`).then((res => {
+      await axios.get(`http://localhost:8080/graph/individual/cycles`).then((res => {
         this.individualCycles = res.data;
         console.log(this.individualCycles);
       })).catch((error) => {
