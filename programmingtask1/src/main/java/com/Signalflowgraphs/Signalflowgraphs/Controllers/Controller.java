@@ -15,30 +15,35 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping
 public class Controller {
-    private final PathGraphInitialization pathGraphInitialization;
+    private PathGraphInitialization pathGraphInitialization;
 
-    private final CycleGraphInitialization cycleGraphInitialization;
+    private CycleGraphInitialization cycleGraphInitialization;
 
-    private final AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph;
+    private AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph;
 
-    private final AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson;
+    private AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson;
 
-    private final MasonOperation mason;
+    private MasonOperation mason;
 
     @Autowired
     public Controller(PathGraphInitialization pathGraphInitialization, CycleGraphInitialization cycleGraphInitialization, AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph, AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson) {
-        this.pathGraphInitialization = pathGraphInitialization;
-        this.cycleGraphInitialization = cycleGraphInitialization;
-        this.allForwardPathsInDirectedGraph = allForwardPathsInDirectedGraph;
-        this.allCyclesInDirectedGraphJohnson = allCyclesInDirectedGraphJohnson;
-        this.mason = new MasonOperation(this.allForwardPathsInDirectedGraph, this.allCyclesInDirectedGraphJohnson);
-
+//        this.pathGraphInitialization = pathGraphInitialization;
+//        this.cycleGraphInitialization = cycleGraphInitialization;
+//        this.allForwardPathsInDirectedGraph = allForwardPathsInDirectedGraph;
+//        this.allCyclesInDirectedGraphJohnson = allCyclesInDirectedGraphJohnson;
+//        this.mason = new MasonOperation(this.allForwardPathsInDirectedGraph, this.allCyclesInDirectedGraphJohnson);
     }
 
     @PostMapping ("/graph")
     public void initializeGraph(@RequestBody List<SourceDestinations> list){
+        pathGraphInitialization = new PathGraphInitialization();
+        cycleGraphInitialization = new CycleGraphInitialization();
         pathGraphInitialization.graphInitialize(list);
         cycleGraphInitialization.graphInitialize(list);
+        allForwardPathsInDirectedGraph = new AllForwardPathsInDirectedGraph();
+        allCyclesInDirectedGraphJohnson = new AllCyclesInDirectedGraphJohnson();
+        mason = new MasonOperation(allForwardPathsInDirectedGraph, allCyclesInDirectedGraphJohnson);
+
     }
 
 

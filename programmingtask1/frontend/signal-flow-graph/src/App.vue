@@ -13,9 +13,32 @@
            name="gain"
            ref="gainInput"
            :readonly="!selected">
-          <input type="submit" value="submit" style="float: right; margin-right: 20px;">
+          <input type="submit" value="submit" style="float: right; margin-right: 10px;">
         </form>
-        <button @click="solve">solve</button>
+        <button style="width: 150px; margin: auto; margin-top: 10px;" @click="solve">solve</button>
+        <hr>
+        <div class="results">
+          <strong>Paths</strong>
+          <ul>
+            <li v-for="item in allPaths" :key="item.id">{{ item }}</li>
+          </ul>
+          <hr>
+          <strong>Individual Loops</strong>
+          <ul>
+            <li v-for="item in individualCycles" :key="item.id">{{ item }}</li>
+          </ul>
+          <hr>
+          <strong>Δ</strong>
+          {{ delta }}
+          <hr>
+          <strong>Δ's of Paths</strong>
+          <ul>
+            <li v-for="item in deltasOfPaths" :key="item.id">{{ item }}</li>
+          </ul>
+          <hr>
+          <strong>Transfer Function</strong>
+          {{ transferFunction }}
+        </div>
       </div>
       <div class="drawing-window">
         <div class="tool-bar">
@@ -26,6 +49,8 @@
           <img src="./assets/Screenshot_2024-04-14_203519.png" 
           @click="source = true; (drawingPath) ? drawingPath = false : drawingPath = true" 
           :class="{selected : drawingPath}">
+
+          <button @click="clear" style="float: right;">reset</button>
 
         </div>
         <v-stage :config="configKonva" style="border: 1px solid black;" @mousedown="handleClick">
@@ -51,10 +76,25 @@
                   x: item.points[2] - 10,
                   y: item.points[3] - 10,
                   draggable: true,
-                  width: 50,
+                  width: 100,
                   height: 50,
                   fillAfterStrokeEnabled: true,
                   fontSize: 35,
+                }">
+            </v-text>
+            <v-text
+              v-for="item in nodes"
+                :key = "item.id" 
+                :config = "{
+                  text: (parseInt(item.id) + 1).toString(),
+                  fill: 'black',
+                  x: item.x - 5,
+                  y: item.y - 5,
+                  draggable: true,
+                  width: 50,
+                  height: 50,
+                  fillAfterStrokeEnabled: true,
+                  fontSize: 10,
                 }">
             </v-text>
             <!-- <v-circle :config="configCircle"></v-circle> -->
@@ -111,6 +151,7 @@ export default {
       individualCycles: [],
       nonTouchingCycles: [],
       deltasOfPaths: [],
+      delta: null,
       transferFunction: null,
     }
   },
@@ -132,9 +173,6 @@ export default {
           commonPaths.push(this.paths[index].id);
         }
       }
-      // console.log(commonPaths);
-      // console.log(idx, typeof(idx));
-      // console.log(this.paths[idx]);
 
       for(index = 0; index < commonPaths.length; index++) {
         if(commonPaths[index] === this.selectedID)
@@ -302,14 +340,6 @@ export default {
         
     },
     async solve() {
-      // axios.post(`http://localhost:8080/graph`, {
-      //   params: {
-      //     "list": this.graph,
-      //   }
-        
-      // }).then((res) => {
-      //   console.log(res);
-      // })
       await fetch("http://localhost:8080/graph", {
         method: "POST",
         headers: {
@@ -321,7 +351,7 @@ export default {
         console.error("Fetch error:", error);
       });
 
-      await axios.get(`http://localhost:8080/graph/paths/${0}/${this.nodes.length - 1}`).then((res => {
+      await axios.get(`http://localhost:8080/graph/paths/${1}/${this.nodes.length}`).then((res => {
         this.allPaths = res.data;
         console.log(this.allPaths);
       })).catch((error) => {
@@ -355,8 +385,28 @@ export default {
       })).catch((error) => {
         console.error("Fetch error:", error);
       });
+      this.delta = this.deltasOfPaths.pop();
     },
-    
+
+    clear() {
+      this.drawingNode = false
+      this.drawingPath = false
+      this.source = false
+      this.destination = false
+      this.selected = false
+      this.selectedID = null
+      this.startNode = null
+      this.endNode = null
+      this.nodes = []
+      this.paths = []
+      this.graph = []
+      this.allPaths = []
+      this.individualCycles = []
+      this.nonTouchingCycles = []
+      this.deltasOfPaths = []
+      this.delta = null
+      this.transferFunction = null
+    },
   },
 }
 </script>
@@ -372,7 +422,8 @@ export default {
 
 .container {
   display: flex;
-  height: 670px;
+  /* height: 670px; */
+  height: auto;
 }
 
 .container .control-window {
@@ -388,7 +439,7 @@ export default {
 }
 
 .container .drawing-window .tool-bar {
-  width: 500px;
+  width: 150px;
   height: 50px;
   position: relative;
   margin: 0 auto;
