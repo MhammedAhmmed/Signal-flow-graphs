@@ -175,7 +175,7 @@ public class AllCyclesInDirectedGraphJohnson {
         for(int i = 0; i < allCycles.size(); i++){
             boolean equal = false;
             for(int j = i + 1; j < allCycles.size(); j++){
-                if(allCycles.get(i) == allCycles.get(j)){
+                if(allCycles.get(i).equals(allCycles.get(j))){
                     equal = true;
                     break;
                 }
@@ -356,4 +356,6 @@ public class AllCyclesInDirectedGraphJohnson {
     public List<List<Integer>> getTwoNonTouchingCyclesNonTouchingPathsGains() {
         return twoNonTouchingCyclesNonTouchingPathsGains;
     }
+
+
 }
