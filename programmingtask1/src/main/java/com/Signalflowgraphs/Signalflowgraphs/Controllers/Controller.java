@@ -39,23 +39,6 @@ public class Controller {
     public void initializeGraph(@RequestBody List<SourceDestinations> list){
         pathGraphInitialization.graphInitialize(list);
         cycleGraphInitialization.graphInitialize(list);
-//        allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
-//        System.out.println("------------------------------------------------------------------------------");
-//        List<List<Integer>> allCycles = allCyclesInDirectedGraphJohnson.getAllCycles();
-//        List<Integer> allCyclesGains = allCyclesInDirectedGraphJohnson.getCyclesGains();
-//        System.out.println("Cycles:");
-//        for(int i = 0; i < allCycles.size(); i++){
-//            System.out.println(allCycles.get(i) + " " + allCyclesGains.get(i));
-//        }
-//        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
-        //get all cycles
-        allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
-//        get all two non-touching cycles
-        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
-//        get all cycles non touching paths
-//        allCyclesInDirectedGraphJohnson.findAllCyclesNonTouchingPaths(allForwardPathsInDirectedGraph);
-////        get all two non-touching cycles paths
-//        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCyclesPaths();
     }
 
 
@@ -67,18 +50,34 @@ public class Controller {
 
     @GetMapping ("/graph/individual/cycles")
     public List<List<Integer>> getIndividualCycles(){
-        //allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
+        allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
+        System.out.println("------------------------------------------------------------------------------");
+        List<List<Integer>> allCycles = allCyclesInDirectedGraphJohnson.getAllCycles();
+        List<Integer> allCyclesGains = allCyclesInDirectedGraphJohnson.getCyclesGains();
+        System.out.println("Cycles:");
+        for(int i = 0; i < allCycles.size(); i++){
+            System.out.println(allCycles.get(i) + " " + allCyclesGains.get(i));
+        }
         return allCyclesInDirectedGraphJohnson.getAllCycles();
     }
 
     @GetMapping ("/graph/non/touching/cycles")
     public List<List<Integer>> getNonTouchingCycles(){
-        //allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
+        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
+        System.out.println("------------------------------------------------------------------------------");
+        List<List<Integer>> allTwoNonTouchingCycles = allCyclesInDirectedGraphJohnson.getTwoNonTouchingCycles();
+        List<Integer> allTwoNonTouchingCyclesGains = allCyclesInDirectedGraphJohnson.getTwoNonTouchingCyclesGains();
+        System.out.println("Two non touching cycles:");
+        for(int i = 0; i < allTwoNonTouchingCyclesGains.size(); i++){
+            System.out.println(allTwoNonTouchingCycles.get(i * 2) + ", " + allTwoNonTouchingCycles.get(i * 2 + 1) + " " + allTwoNonTouchingCyclesGains.get(i));
+        }
         return allCyclesInDirectedGraphJohnson.getTwoNonTouchingCycles();
     }
 
     @GetMapping ("/graph/deltas")
     public List<Integer> getDeltas(){
+        allCyclesInDirectedGraphJohnson.findAllCyclesNonTouchingPaths(allForwardPathsInDirectedGraph);
+        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCyclesPaths();
         List<Integer> deltas = mason.getDeltasOfPaths(allForwardPathsInDirectedGraph.getAllPaths().size());
         deltas.add((int) mason.getDelta());
         return deltas;
@@ -86,8 +85,6 @@ public class Controller {
 
     @GetMapping ("/graph/transfer/function")
     public double getTransferFunction(){
-        allCyclesInDirectedGraphJohnson.findAllCyclesNonTouchingPaths(allForwardPathsInDirectedGraph);
-        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCyclesPaths();
         return mason.getTransferFunctionValue();
     }
 }
