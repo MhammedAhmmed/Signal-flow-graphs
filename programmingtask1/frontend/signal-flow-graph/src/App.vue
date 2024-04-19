@@ -141,7 +141,7 @@ export default {
           indexOfSelected = index;
       }
       for(let i = 0; i < this.graph[this.paths[idx].source].destinations.length; i++) {
-        if(this.graph[this.paths[idx].source].destinations[i].destination == this.paths[idx].destination) {
+        if(this.graph[this.paths[idx].source].destinations[i].destination == this.paths[idx].destination + 1) {
           if(indexOfSelected === 0) {
             this.graph[this.paths[idx].source].destinations[i].weight = this.value;
             break;
@@ -226,7 +226,7 @@ export default {
         destination: this.endNode,
       }
       this.paths.push(newPath);
-      this.graph[this.startNode].destinations.push({destination: this.endNode, weight: 1})
+      this.graph[this.startNode].destinations.push({destination: this.endNode + 1, weight: 1})
     },
 
 
@@ -245,7 +245,7 @@ export default {
         }
         this.nodes.push(newNode)
         this.graph.push({
-          source: this.nodes.length - 1,
+          source: this.nodes.length,
           destinations: [],
         })
       }
