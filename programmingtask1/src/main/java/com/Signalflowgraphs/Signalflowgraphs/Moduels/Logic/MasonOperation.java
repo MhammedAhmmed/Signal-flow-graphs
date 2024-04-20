@@ -64,8 +64,32 @@ public class MasonOperation {
         return deltaPaths;
     }
 
+    private List<Integer> getSums(){
+        List<Integer> sums = new ArrayList<>();
+        List<List<Integer>> results = allCyclesInDirectedGraphJohnson.getAllCombinationsOfNNonTouchingCyclesGains();
+        for (List<Integer> result : results){
+            int sum = 0;
+            for (Integer integer : result)
+                sum += integer;
+            sums.add(sum);
+        }
+        return sums;
+    }
+
     public double getDelta(){
-        return  1 - getSumOfIndividualCycles() + getSumOfTwoNonTouchingCycles();
+        double delta = 1 - getSumOfIndividualCycles();
+        boolean plusTurn = true;
+        for (Integer integer : getSums()){
+            if (plusTurn){
+                delta += integer;
+                plusTurn = false;
+            }
+            else {
+                delta -= integer;
+                plusTurn = true;
+            }
+        }
+        return delta;
     }
 
     public Double getTransferFunctionValue(){

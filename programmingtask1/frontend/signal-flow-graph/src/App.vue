@@ -30,7 +30,11 @@
           <hr>
           <strong>Non-Touching Loops</strong>
           <ul>
-            <li v-for="item in nonTouchingCycles" :key="item.id">{{ item }}</li>
+            <li v-for="(item, index) in nonTouchingCycles" :key="index">
+              <ul>
+                <li v-for="(subItem, subIndex) in item" :key="subIndex">{{ subItem }}</li>
+              </ul>
+            </li>
           </ul>
           <hr>
           <strong>Δ</strong>
@@ -429,10 +433,10 @@ export default {
   display: flex;
   /* height: 670px; */
   height: auto;
+  width: max-content
 }
 
 .container .control-window {
-  width: 200px;
   border: 1px solid black;
   border-radius: 5px;
   margin-right: 10px;

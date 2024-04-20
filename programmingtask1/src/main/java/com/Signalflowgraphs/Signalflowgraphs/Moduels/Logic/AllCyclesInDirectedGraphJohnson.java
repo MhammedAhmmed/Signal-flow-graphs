@@ -29,6 +29,8 @@ public class AllCyclesInDirectedGraphJohnson {
 
     private List<List<Integer>> twoNonTouchingCyclesNonTouchingPathsGains;
 
+    private final int maxN = 10;
+
     public List<List<Vertex<Integer>>> simpleCycles(Graph<Integer> graph) {
 
         blockedSet = new HashSet<>();
@@ -279,6 +281,94 @@ public class AllCyclesInDirectedGraphJohnson {
             twoNonTouchingCyclesNonTouchingPaths.add(twoNonTouchingCyclesNonTouchingPath);
             twoNonTouchingCyclesNonTouchingPathsGains.add(twoNonTouchingCyclesNonTouchingPathGains);
         }
+    }
+
+
+    private boolean areNonTouching(List<Vertex<Integer>> cycle1, List<Vertex<Integer>> cycle2) {
+        // Iterate over vertices of cycle1
+        for (Vertex<Integer> vertex1 : cycle1) {
+            // Iterate over vertices of cycle2
+            for (Vertex<Integer> vertex2 : cycle2) {
+                // Check if any vertex of cycle1 is the same as any vertex of cycle2
+                if (vertex1.equals(vertex2)) {
+                    return false; // Cycles are touching
+                }
+            }
+        }
+        return true; // Cycles are non-touching
+    }
+
+    private void generateNonTouchingCombinations(int n, int index, List<List<Vertex<Integer>>> currentCombination, List<List<List<Vertex<Integer>>>> result) {
+        if (n == 0) {
+            result.add(new ArrayList<>(currentCombination));
+            return;
+        }
+
+        for (int i = index; i < allCycles.size(); i++) {
+            boolean isValid = true;
+            for (List<Vertex<Integer>> cycle : currentCombination) {
+                if (!areNonTouching(cycle, allCycles.get(i))) {
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) {
+                currentCombination.add(allCycles.get(i));
+                generateNonTouchingCombinations(n - 1, i + 1, currentCombination, result);
+                currentCombination.remove(currentCombination.size() - 1);
+            }
+        }
+    }
+
+    private List<List<List<Vertex<Integer>>>> getNonTouchingCycleCombinations(int n) {
+        List<List<List<Vertex<Integer>>>> result = new ArrayList<>();
+        generateNonTouchingCombinations(n, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    // Function to calculate the total gain of a combination by multiplying individual gains
+    private int calculateCombinationGain(List<List<Vertex<Integer>>> combination, List<Integer> cyclesGains) {
+        int totalGain = 1; // Initialize total gain to 1 for multiplication
+        for (List<Vertex<Integer>> cycle : combination) {
+            int cycleIndex = allCycles.indexOf(cycle);
+            totalGain *= cyclesGains.get(cycleIndex); // Multiply cycle gain with total gain
+        }
+        return totalGain;
+    }
+
+    // Function to get combinations of n non-touching cycles with their gains
+    private List<Integer> getNonTouchingCycleCombinationsWithGains(int n) {
+        List<Integer> result = new ArrayList<>();
+        List<List<List<Vertex<Integer>>>> combinations = getNonTouchingCycleCombinations(n);
+        for (List<List<Vertex<Integer>>> combination : combinations) {
+            int gain = calculateCombinationGain(combination, cyclesGains);
+            result.add(gain);
+        }
+        return result;
+    }
+
+    public List<List<String>> getAllCombinationsOfNNonTouchingCycles(){
+        List<List<String>> AllCombinationsOfNNonTouchingCycles = new ArrayList<>();
+        for (int i = 2; i <= maxN; i++) {
+            List<List<List<Vertex<Integer>>>> combinations = getNonTouchingCycleCombinations(i);
+            if (combinations.isEmpty()) break;
+            List<String> list = new ArrayList<>();
+            for (List<List<Vertex<Integer>>> combination : combinations){
+                list.add(combination.toString());
+            }
+            AllCombinationsOfNNonTouchingCycles.add(list);
+        }
+        return AllCombinationsOfNNonTouchingCycles;
+    }
+
+    public List<List<Integer>> getAllCombinationsOfNNonTouchingCyclesGains(){
+        List<List<Integer>> results = new ArrayList<>();
+        for (int i = 2; i <= maxN; i++){
+            List<Integer> result = getNonTouchingCycleCombinationsWithGains(i);
+            if(result.isEmpty()) break;
+            results.add(result);
+        }
+        return results;
     }
 
     public List<List<Integer>> getAllCycles() {

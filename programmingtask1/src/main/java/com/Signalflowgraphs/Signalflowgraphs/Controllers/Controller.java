@@ -6,6 +6,7 @@ import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.AllForwardPathsInDire
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.MasonOperation;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.PathGraphInitialization;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.SourceDestinations;
+import com.Signalflowgraphs.Signalflowgraphs.Moduels.Vertex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,19 +20,16 @@ public class Controller {
 
     private CycleGraphInitialization cycleGraphInitialization;
 
-    private AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph;
+    private final AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph;
 
-    private AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson;
+    private final AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson;
 
-    private MasonOperation mason;
+    private final MasonOperation mason;
 
-    @Autowired
-    public Controller(PathGraphInitialization pathGraphInitialization, CycleGraphInitialization cycleGraphInitialization, AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph, AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson) {
-//        this.pathGraphInitialization = pathGraphInitialization;
-//        this.cycleGraphInitialization = cycleGraphInitialization;
-//        this.allForwardPathsInDirectedGraph = allForwardPathsInDirectedGraph;
-//        this.allCyclesInDirectedGraphJohnson = allCyclesInDirectedGraphJohnson;
-//        this.mason = new MasonOperation(this.allForwardPathsInDirectedGraph, this.allCyclesInDirectedGraphJohnson);
+    public Controller(AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph, AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson, MasonOperation mason) {
+        this.allForwardPathsInDirectedGraph = allForwardPathsInDirectedGraph;
+        this.allCyclesInDirectedGraphJohnson = allCyclesInDirectedGraphJohnson;
+        this.mason = mason;
     }
 
     @PostMapping ("/graph")
@@ -40,9 +38,9 @@ public class Controller {
         cycleGraphInitialization = new CycleGraphInitialization();
         pathGraphInitialization.graphInitialize(list);
         cycleGraphInitialization.graphInitialize(list);
-        allForwardPathsInDirectedGraph = new AllForwardPathsInDirectedGraph();
-        allCyclesInDirectedGraphJohnson = new AllCyclesInDirectedGraphJohnson();
-        mason = new MasonOperation(allForwardPathsInDirectedGraph, allCyclesInDirectedGraphJohnson);
+//        allForwardPathsInDirectedGraph = new AllForwardPathsInDirectedGraph();
+//        allCyclesInDirectedGraphJohnson = new AllCyclesInDirectedGraphJohnson();
+//        mason = new MasonOperation(allForwardPathsInDirectedGraph, allCyclesInDirectedGraphJohnson);
 
     }
 
@@ -67,16 +65,17 @@ public class Controller {
     }
 
     @GetMapping ("/graph/non/touching/cycles")
-    public List<List<Integer>> getNonTouchingCycles(){
-        allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCycles();
+    public List<List<String>> getNonTouchingCycles(){
         System.out.println("------------------------------------------------------------------------------");
-        List<List<Integer>> allTwoNonTouchingCycles = allCyclesInDirectedGraphJohnson.getTwoNonTouchingCycles();
-        List<Integer> allTwoNonTouchingCyclesGains = allCyclesInDirectedGraphJohnson.getTwoNonTouchingCyclesGains();
-        System.out.println("Two non touching cycles:");
-        for(int i = 0; i < allTwoNonTouchingCyclesGains.size(); i++){
-            System.out.println(allTwoNonTouchingCycles.get(i * 2) + ", " + allTwoNonTouchingCycles.get(i * 2 + 1) + " " + allTwoNonTouchingCyclesGains.get(i));
+        List<List<String>> list1 = allCyclesInDirectedGraphJohnson.getAllCombinationsOfNNonTouchingCycles();
+        int index = 2;
+        for (List<String> stringList : list1) {
+            System.out.println("n = " + index);
+            index++;
+            for (String s : stringList)
+                System.out.println(s);
         }
-        return allCyclesInDirectedGraphJohnson.getTwoNonTouchingCycles();
+        return allCyclesInDirectedGraphJohnson.getAllCombinationsOfNNonTouchingCycles();
     }
 
     @GetMapping ("/graph/deltas")
