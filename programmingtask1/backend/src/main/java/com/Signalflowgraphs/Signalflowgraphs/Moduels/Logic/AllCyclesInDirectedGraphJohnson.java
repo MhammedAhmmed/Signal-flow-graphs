@@ -1,10 +1,12 @@
 package com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic;
 
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.*;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.List;
 
+@Service
 public class AllCyclesInDirectedGraphJohnson {
     private Set<Vertex<Integer>> blockedSet;
     private Map<Vertex<Integer>, Set<Vertex<Integer>>> blockedMap;
@@ -15,10 +17,6 @@ public class AllCyclesInDirectedGraphJohnson {
 
     private List<List<Vertex<Integer>>>distinctCycles;
 
-    private List<List<Vertex<Integer>>> twoNonTouchingCycles;
-
-    private List<Integer> twoNonTouchingCyclesGains;
-
     private List<List<List<Vertex<Integer>>>> allCyclesNonTouchingPaths;
 
     private List<List<Integer>> cyclesNonTouchingPathsGains;
@@ -26,6 +24,9 @@ public class AllCyclesInDirectedGraphJohnson {
     private List<List<List<Vertex<Integer>>>> twoNonTouchingCyclesNonTouchingPaths;
 
     private List<List<Integer>> twoNonTouchingCyclesNonTouchingPathsGains;
+    private List<List<List<List<Vertex<Integer>>>>> allNNonTouchingCycles;
+    private List<List<Integer>> allNNonTouchingCyclesGains;
+    private final int maxN = 10;
 
     public List<List<Vertex<Integer>>> simpleCycles(Graph<Integer> graph) {
 
@@ -173,7 +174,7 @@ public class AllCyclesInDirectedGraphJohnson {
         for(int i = 0; i < allCycles.size(); i++){
             boolean equal = false;
             for(int j = i + 1; j < allCycles.size(); j++){
-                if(allCycles.get(i) == allCycles.get(j)){
+                if(allCycles.get(i).equals(allCycles.get(j))){
                     equal = true;
                     break;
                 }
@@ -203,27 +204,6 @@ public class AllCyclesInDirectedGraphJohnson {
                 }
             }
             cyclesGains.addAll(tempList);
-        }
-    }
-
-    public void findAllTwoNonTouchingCycles(){
-        twoNonTouchingCycles = new ArrayList<>();
-        twoNonTouchingCyclesGains = new ArrayList<>();
-        for (int i = 0; i < allCycles.size(); i++){
-            for(int j = i + 1; j < allCycles.size(); j++){
-                boolean isTouching = false;
-                for(Vertex<Integer> v : allCycles.get(i)){
-                    if(allCycles.get(j).contains(v)){
-                        isTouching = true;
-                        break;
-                    }
-                }
-                if(!isTouching) {
-                    twoNonTouchingCycles.add(allCycles.get(i));
-                    twoNonTouchingCycles.add(allCycles.get(j));
-                    twoNonTouchingCyclesGains.add(cyclesGains.get(i) * cyclesGains.get(j));
-                }
-            }
         }
     }
 
@@ -279,11 +259,91 @@ public class AllCyclesInDirectedGraphJohnson {
         }
     }
 
+
+    private boolean areNonTouching(List<Vertex<Integer>> cycle1, List<Vertex<Integer>> cycle2) {
+        // Iterate over vertices of cycle1
+        for (Vertex<Integer> vertex1 : cycle1) {
+            // Iterate over vertices of cycle2
+            for (Vertex<Integer> vertex2 : cycle2) {
+                // Check if any vertex of cycle1 is the same as any vertex of cycle2
+                if (vertex1.equals(vertex2)) {
+                    return false; // Cycles are touching
+                }
+            }
+        }
+        return true; // Cycles are non-touching
+    }
+
+    private void generateNonTouchingCombinations(int n, int index, List<List<Vertex<Integer>>> currentCombination, List<List<List<Vertex<Integer>>>> result) {
+        if (n == 0) {
+            result.add(new ArrayList<>(currentCombination));
+            return;
+        }
+
+        for (int i = index; i < allCycles.size(); i++) {
+            boolean isValid = true;
+            for (List<Vertex<Integer>> cycle : currentCombination) {
+                if (!areNonTouching(cycle, allCycles.get(i))) {
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) {
+                currentCombination.add(allCycles.get(i));
+                generateNonTouchingCombinations(n - 1, i + 1, currentCombination, result);
+                currentCombination.remove(currentCombination.size() - 1);
+            }
+        }
+    }
+
+    private List<List<List<Vertex<Integer>>>> getNonTouchingCycleCombinations(int n) {
+        List<List<List<Vertex<Integer>>>> result= new ArrayList<>();
+        generateNonTouchingCombinations(n, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    public void findAllCombinationsOfNNonTouchingCycles(){
+        allNNonTouchingCycles = new ArrayList<>();
+        for (int i = 2; i <= maxN; i++) {
+            List<List<List<Vertex<Integer>>>> combinations = getNonTouchingCycleCombinations(i);
+            if (combinations.isEmpty()) break;
+            allNNonTouchingCycles.add(combinations);
+        }
+    }
+
+    // Function to calculate the total gain of a combination by multiplying individual gains
+    private int calculateCombinationGain(List<List<Vertex<Integer>>> combination, List<Integer> cyclesGains) {
+        int totalGain = 1; // Initialize total gain to 1 for multiplication
+        for (List<Vertex<Integer>> cycle : combination) {
+            int cycleIndex = allCycles.indexOf(cycle);
+            totalGain *= cyclesGains.get(cycleIndex); // Multiply cycle gain with total gain
+        }
+        return totalGain;
+    }
+
+    // Function to get combinations of n non-touching cycles with their gains
+    private List<Integer> getNonTouchingCycleCombinationsWithGains(List<List<List<Vertex<Integer>>>> combinations) {
+        List<Integer> result = new ArrayList<>();
+        for (List<List<Vertex<Integer>>> combination : combinations) {
+            int gain = calculateCombinationGain(combination, cyclesGains);
+            result.add(gain);
+        }
+        return result;
+    }
+    public void findAllCombinationsOfNNonTouchingCyclesGains(){
+        allNNonTouchingCyclesGains = new ArrayList<>();
+        for (List<List<List<Vertex<Integer>>>> combinations : allNNonTouchingCycles){
+            List<Integer> result = getNonTouchingCycleCombinationsWithGains(combinations);
+            allNNonTouchingCyclesGains.add(result);
+        }
+    }
+
+
     public List<List<Integer>> getAllCycles() {
         List<List<Integer>> allCyclesList = new ArrayList<>();
         for (List<Vertex<Integer>> cycle : allCycles){
             List<Integer> cycleList = new ArrayList<>();
-            for(Vertex vertex : cycle){
+            for(Vertex<Integer> vertex : cycle){
                 cycleList.add((int) vertex.getId());
             }
             allCyclesList.add(cycleList);
@@ -295,20 +355,21 @@ public class AllCyclesInDirectedGraphJohnson {
         return cyclesGains;
     }
 
-    public List<List<Integer>> getTwoNonTouchingCycles() {
-        List<List<Integer>> twoNonTouchingCyclesList = new ArrayList<>();
-        for (List<Vertex<Integer>> cycle : twoNonTouchingCycles){
-            List<Integer> cycleList = new ArrayList<>();
-            for(Vertex vertex : cycle){
-                cycleList.add((int) vertex.getId());
+    public List<List<String>> getAllCombinationsOfNNonTouchingCycles(){
+        List<List<String>> AllCombinationsOfNNonTouchingCycles = new ArrayList<>();
+        for (List<List<List<Vertex<Integer>>>> combinations : allNNonTouchingCycles) {
+            List<String> list = new ArrayList<>();
+            for (List<List<Vertex<Integer>>> combination : combinations){
+                list.add(combination.toString());
             }
-            twoNonTouchingCyclesList.add(cycleList);
+            AllCombinationsOfNNonTouchingCycles.add(list);
         }
-        return twoNonTouchingCyclesList;
+        return AllCombinationsOfNNonTouchingCycles;
     }
 
-    public List<Integer> getTwoNonTouchingCyclesGains() {
-        return twoNonTouchingCyclesGains;
+
+    public List<List<Integer>> getAllNNonTouchingCyclesGains() {
+        return allNNonTouchingCyclesGains;
     }
 
     public List<List<Vertex<Integer>>> getDistinctCycles() {
@@ -354,4 +415,6 @@ public class AllCyclesInDirectedGraphJohnson {
     public List<List<Integer>> getTwoNonTouchingCyclesNonTouchingPathsGains() {
         return twoNonTouchingCyclesNonTouchingPathsGains;
     }
+
+
 }

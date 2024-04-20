@@ -16,15 +16,18 @@ public class Main {
         SourceDestinations e6 = new SourceDestinations();
         SourceDestinations e7 = new SourceDestinations();
         SourceDestinations e8 = new SourceDestinations();
+//        SourceDestinations e9 = new SourceDestinations();
+//        SourceDestinations e10 = new SourceDestinations();
+//        SourceDestinations e11 = new SourceDestinations();
 
-        e1.setSource(1); e1.setDestinations(List.of(new Pair(2, 1), new Pair(5, 1)));
-        e2.setSource(2); e2.setDestinations(List.of(new Pair(3, 1)));
-        e3.setSource(3); e3.setDestinations(List.of(new Pair(2, 2), new Pair(4, 1)));
-        e4.setSource(4); e4.setDestinations(List.of(new Pair(3, 2), new Pair(8, 1)));
-        e5.setSource(5); e5.setDestinations(List.of(new Pair(6, 1)));
-        e6.setSource(6); e6.setDestinations(List.of(new Pair(5, 2), new Pair(7, 1)));
-        e7.setSource(7); e7.setDestinations(List.of(new Pair(6, 2), new Pair(8, 1)));
-        e8.setSource(8); e8.setDestinations(new ArrayList<>());
+        e1.setSource(1); e1.setDestinations(List.of(new Pair(2, 1)));
+        e2.setSource(2); e2.setDestinations(List.of(new Pair(3, 2)));
+        e3.setSource(3); e3.setDestinations(List.of(new Pair(4, 3), new Pair(2, -1)));
+        e4.setSource(4); e4.setDestinations(List.of(new Pair(5, 4)));
+        e5.setSource(5); e5.setDestinations(List.of(new Pair(6, 5), new Pair(4, -1)));
+        e6.setSource(6); e6.setDestinations(List.of(new Pair(7, -1)));
+        e7.setSource(7); e7.setDestinations(List.of(new Pair(8, -2)));
+        e8.setSource(8); e8.setDestinations(List.of(new Pair(2, -3), new Pair(7, 1)));
 
         List<SourceDestinations> list = new ArrayList<>();
         list.add(e1);
@@ -47,17 +50,21 @@ public class Main {
         cycleGraphInitialization.graphInitialize(list);
 
 //        get all paths
-        paths.findAllPaths(pathGraphInitialization, 1, 8);
+        paths.findAllPaths(pathGraphInitialization, 1, 6);
 
 
 //        get all cycles
         johnson.findAllCycles(cycleGraphInitialization);
-//        get all two non-touching cycles
-        johnson.findAllTwoNonTouchingCycles();
-//        get all cycles non touching paths
+////        get all two non-touching cycles
+//        johnson.findAllTwoNonTouchingCycles();
+//        get all cycles non-touching paths
         johnson.findAllCyclesNonTouchingPaths(paths);
 //        get all two non-touching cycles paths
         johnson.findAllTwoNonTouchingCyclesPaths();
+//        find all combinations of n non-touching cycles
+        johnson.findAllCombinationsOfNNonTouchingCycles();
+//        find all combinations of n non-touching cycles gains
+        johnson.findAllCombinationsOfNNonTouchingCyclesGains();
 
         MasonOperation masonOperation = new MasonOperation(paths, johnson);
 
@@ -74,22 +81,22 @@ public class Main {
         for(int i = 0; i < allCycles.size(); i++){
             System.out.println(allCycles.get(i) + " " + allCyclesGains.get(i));
         }
-//
-//
+
+
 //        System.out.println("Distinct cycles:");
 //        for(List<Vertex<Integer>> vv: johnson.getDistinctCycles()){
 //            for(Vertex<Integer>v: vv)
 //                System.out.print(v + " ");
 //            System.out.println();
 //        }
-//
-        System.out.println("------------------------------------------------------------------------------");
-        List<List<Integer>> allTwoNonTouchingCycles = johnson.getTwoNonTouchingCycles();
-        List<Integer> allTwoNonTouchingCyclesGains = johnson.getTwoNonTouchingCyclesGains();
-        System.out.println("Two non touching cycles:");
-        for(int i = 0; i < allTwoNonTouchingCyclesGains.size(); i++){
-            System.out.println(allTwoNonTouchingCycles.get(i * 2) + ", " + allTwoNonTouchingCycles.get(i * 2 + 1) + " " + allTwoNonTouchingCyclesGains.get(i));
-        }
+
+//        System.out.println("------------------------------------------------------------------------------");
+//        List<List<Integer>> allTwoNonTouchingCycles = johnson.getTwoNonTouchingCycles();
+//        List<Integer> allTwoNonTouchingCyclesGains = johnson.getTwoNonTouchingCyclesGains();
+//        System.out.println("Two non touching cycles:");
+//        for(int i = 0; i < allTwoNonTouchingCyclesGains.size(); i++){
+//            System.out.println(allTwoNonTouchingCycles.get(i * 2) + ", " + allTwoNonTouchingCycles.get(i * 2 + 1) + " " + allTwoNonTouchingCyclesGains.get(i));
+//        }
         System.out.println("------------------------------------------------------------------------------");
         System.out.println("Cycles non touching paths:");
         List<List<List<Integer>>> allCyclesNonTouchingPaths = johnson.getAllCyclesNonTouchingPaths();
@@ -113,6 +120,25 @@ public class Main {
         System.out.println("------------------------------------------------------------------------------");
         System.out.println("Mason Data:");
         System.out.println(masonOperation.getTransferFunctionValue());
-//        masonOperation.getTransferFunctionValue();
+
+        System.out.println("------------------------------------------------------------------------------");
+        List<List<String>> list1 = johnson.getAllCombinationsOfNNonTouchingCycles();
+        int index = 2;
+        for (List<String> stringList : list1) {
+            System.out.println("n = " + index);
+            index++;
+            for (String s : stringList)
+                System.out.println(s);
+        }
+        System.out.println("------------------------------------------------------------------------------");
+        List<List<Integer>> results = johnson.getAllNNonTouchingCyclesGains();
+        index = 2;
+        for (List<Integer> result : results){
+            System.out.println("n = " + index);
+            index++;
+            for (Integer integer : result)
+                System.out.println(integer);
+        }
+        System.out.println("------------------------------------------------------------------------------");
     }
 }

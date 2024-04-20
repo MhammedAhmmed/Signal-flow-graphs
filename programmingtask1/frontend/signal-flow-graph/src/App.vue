@@ -13,10 +13,46 @@
            name="gain"
            ref="gainInput"
            :readonly="!selected">
-          <input type="submit" value="submit" style="float: right; margin-right: 20px;">
+          <input type="submit" value="submit" style="float: right; margin-right: 10px;">
         </form>
+<<<<<<< HEAD
+        <button style="width: 150px; margin: auto; margin-top: 10px;" @click="solve">solve</button>
+        <hr>
+        <div class="results">
+          <strong>Paths</strong>
+          <ul>
+            <li v-for="item in allPaths" :key="item.id">{{ item }}</li>
+          </ul>
+          <hr>
+          <strong>Individual Loops</strong>
+          <ul>
+            <li v-for="item in individualCycles" :key="item.id">{{ item }}</li>
+          </ul>
+          <hr>
+          <strong>Non-Touching Loops</strong>
+          <ul>
+            <li v-for="(item, index) in nonTouchingCycles" :key="index">
+              <ul>
+                <li v-for="(subItem, subIndex) in item" :key="subIndex">{{ subItem }}</li>
+              </ul>
+            </li>
+          </ul>
+          <hr>
+          <strong>Δ</strong>
+          {{ delta }}
+          <hr>
+          <strong>Δ's of Paths</strong>
+          <ul>
+            <li v-for="item in deltasOfPaths" :key="item.id">{{ item }}</li>
+          </ul>
+          <hr>
+          <strong>Transfer Function</strong>
+          {{ transferFunction }}
+        </div>
+=======
         <br>
         <button @click="solve">solve</button>
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
       </div>
       <div class="drawing-window">
         <div class="tool-bar">
@@ -27,6 +63,8 @@
           <img src="./assets/Screenshot_2024-04-14_203519.png" 
           @click="source = true; (drawingPath) ? drawingPath = false : drawingPath = true" 
           :class="{selected : drawingPath}">
+
+          <button @click="clear" style="float: right;">reset</button>
 
         </div>
         <v-stage :config="configKonva" style="border: 1px solid black;" @mousedown="handleClick">
@@ -52,10 +90,25 @@
                   x: item.points[2] - 10,
                   y: item.points[3] - 10,
                   draggable: true,
-                  width: 50,
+                  width: 100,
                   height: 50,
                   fillAfterStrokeEnabled: true,
                   fontSize: 35,
+                }">
+            </v-text>
+            <v-text
+              v-for="item in nodes"
+                :key = "item.id" 
+                :config = "{
+                  text: (parseInt(item.id) + 1).toString(),
+                  fill: 'black',
+                  x: item.x - 5,
+                  y: item.y - 5,
+                  draggable: false,
+                  width: 50,
+                  height: 50,
+                  fillAfterStrokeEnabled: true,
+                  fontSize: 10,
                 }">
             </v-text>
             <!-- <v-circle :config="configCircle"></v-circle> -->
@@ -70,7 +123,12 @@
 </template>
 
 <script>
+<<<<<<< HEAD
+import axios from 'axios';
+
+=======
 //import axios from 'axios'
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
 
 export default {
   name: 'App',
@@ -106,6 +164,13 @@ export default {
         source: null,
         destinations: [],
       },
+
+      allPaths: [],
+      individualCycles: [],
+      nonTouchingCycles: [],
+      deltasOfPaths: [],
+      delta: null,
+      transferFunction: null,
     }
   },
   methods: {
@@ -126,16 +191,13 @@ export default {
           commonPaths.push(this.paths[index].id);
         }
       }
-      console.log(commonPaths);
-      console.log(idx, typeof(idx));
-      console.log(this.paths[idx]);
 
       for(index = 0; index < commonPaths.length; index++) {
         if(commonPaths[index] === this.selectedID)
           indexOfSelected = index;
       }
       for(let i = 0; i < this.graph[this.paths[idx].source].destinations.length; i++) {
-        if(this.graph[this.paths[idx].source].destinations[i].destination == this.paths[idx].destination) {
+        if(this.graph[this.paths[idx].source].destinations[i].destination == this.paths[idx].destination + 1) {
           if(indexOfSelected === 0) {
             this.graph[this.paths[idx].source].destinations[i].weight = this.value;
             break;
@@ -173,19 +235,24 @@ export default {
             counter++;
           }
       }
-      // for(i = 0; i < this.nodes.length; i++) {
-      //   if((x1 === this.nodes[i].x && y1 === this.nodes[i].y) || (x2 === this.nodes[i].x && y2 === this.nodes[i].y))
-      //     continue;
-      //   if(slope >= Math.abs((y2 - this.nodes[i].y) / (x2 - this.nodes[i].x)) - 0.2 &&
-      //      slope <= Math.abs((y2 - this.nodes[i].y) / (x2 - this.nodes[i].x)) + 0.2) {
-      //       counter++;
-      //   }
-      // }
+      let first = 0;
+      let second = 0; 
+      for(i = 0; i < this.nodes.length; i++) {
+        if(x1 === this.nodes[i].x && y1 === this.nodes[i].y)
+          first = parseInt(this.nodes[i].id);
+        if(x2 === this.nodes[i].x && y2 === this.nodes[i].y)
+          second = parseInt(this.nodes[i].id);
+      }
+      counter += Math.abs(second - first) - 1;
       return counter;
     },
     addNewPath() {
       let counter = this.count(this.startPoint.x, this.startPoint.y, this.endPoint.x, this.endPoint.y);
       counter *= 50;
+      if(this.startPoint.y === this.endPoint.y) {
+        this.nodes[this.endNode].y--;
+        this.endPoint.y--;
+      }
       let middleX = (this.startPoint.x + this.endPoint.x) / 2;
       let middleY = (this.startPoint.y + this.endPoint.y) / 2;
       let slope = - ((this.endPoint.x - this.startPoint.x) / (this.startPoint.y - this.endPoint.y));
@@ -215,7 +282,7 @@ export default {
         destination: this.endNode,
       }
       this.paths.push(newPath);
-      this.graph[this.startNode].destinations.push({destination: this.endNode, weight: 1})
+      this.graph[this.startNode].destinations.push({destination: this.endNode + 1, weight: 1})
     },
 
 
@@ -234,7 +301,7 @@ export default {
         }
         this.nodes.push(newNode)
         this.graph.push({
-          source: this.nodes.length - 1,
+          source: this.nodes.length,
           destinations: [],
         })
       }
@@ -291,6 +358,8 @@ export default {
         
     },
     async solve() {
+<<<<<<< HEAD
+=======
       // axios.post(`http://localhost:8080/graph`, {
       //   params: {
       //     "list": this.graph,
@@ -299,6 +368,7 @@ export default {
       // }).then((res) => {
       //   console.log(res);
       // })
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
       await fetch("http://localhost:8080/graph", {
         method: "POST",
         headers: {
@@ -309,8 +379,68 @@ export default {
       }).catch((error) => {
         console.error("Fetch error:", error);
       });
+<<<<<<< HEAD
+
+      await axios.get(`http://localhost:8080/graph/paths/${1}/${this.nodes.length}`).then((res => {
+        this.allPaths = res.data;
+        console.log(this.allPaths);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/individual/cycles`).then((res => {
+        this.individualCycles = res.data;
+        console.log(this.individualCycles);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/non/touching/cycles`).then((res => {
+        this.nonTouchingCycles = res.data;
+        console.log(this.nonTouchingCycles);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/deltas`).then((res => {
+        this.deltasOfPaths = res.data;
+        console.log(this.deltasOfPaths);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+
+      await axios.get(`http://localhost:8080/graph/transfer/function`).then((res => {
+        this.transferFunction = res.data;
+        console.log(this.transferFunction);
+      })).catch((error) => {
+        console.error("Fetch error:", error);
+      });
+      this.delta = this.deltasOfPaths.pop();
+    },
+
+    clear() {
+      this.drawingNode = false
+      this.drawingPath = false
+      this.source = false
+      this.destination = false
+      this.selected = false
+      this.selectedID = null
+      this.startNode = null
+      this.endNode = null
+      this.nodes = []
+      this.paths = []
+      this.graph = []
+      this.allPaths = []
+      this.individualCycles = []
+      this.nonTouchingCycles = []
+      this.deltasOfPaths = []
+      this.delta = null
+      this.transferFunction = null
+    },
+=======
     },
     
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
   },
 }
 </script>
@@ -326,11 +456,12 @@ export default {
 
 .container {
   display: flex;
-  height: 670px;
+  /* height: 670px; */
+  height: auto;
+  width: max-content
 }
 
 .container .control-window {
-  width: 200px;
   border: 1px solid black;
   border-radius: 5px;
   margin-right: 10px;
@@ -342,7 +473,7 @@ export default {
 }
 
 .container .drawing-window .tool-bar {
-  width: 500px;
+  width: 150px;
   height: 50px;
   position: relative;
   margin: 0 auto;

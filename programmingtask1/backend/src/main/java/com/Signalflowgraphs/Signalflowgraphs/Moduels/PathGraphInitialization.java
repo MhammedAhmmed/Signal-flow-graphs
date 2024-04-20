@@ -1,6 +1,9 @@
 package com.Signalflowgraphs.Signalflowgraphs.Moduels;
 
+<<<<<<< HEAD:programmingtask1/backend/src/main/java/com/Signalflowgraphs/Signalflowgraphs/Moduels/PathGraphInitialization.java
+=======
 import org.springframework.context.annotation.Bean;
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86:programmingtask1/src/main/java/com/Signalflowgraphs/Signalflowgraphs/Moduels/PathGraphInitialization.java
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
