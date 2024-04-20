@@ -21,14 +21,6 @@ public class MasonOperation {
             sum += value;
         return sum;
     }
-
-    private Integer getSumOfTwoNonTouchingCycles(){
-        int sum = 0;
-        for (Integer value: allCyclesInDirectedGraphJohnson.getTwoNonTouchingCyclesGains())
-            sum += value;
-        return sum;
-    }
-
     private List<Integer> getSumOfIndividualCyclesNonTouchingPaths(){
         List<Integer> values = new ArrayList<>();
         for (List<Integer> cycles : allCyclesInDirectedGraphJohnson.getCyclesNonTouchingPathsGains()){
@@ -66,7 +58,7 @@ public class MasonOperation {
 
     private List<Integer> getSums(){
         List<Integer> sums = new ArrayList<>();
-        List<List<Integer>> results = allCyclesInDirectedGraphJohnson.getAllCombinationsOfNNonTouchingCyclesGains();
+        List<List<Integer>> results = allCyclesInDirectedGraphJohnson.getAllNNonTouchingCyclesGains();
         for (List<Integer> result : results){
             int sum = 0;
             for (Integer integer : result)

@@ -6,7 +6,6 @@ import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.AllForwardPathsInDire
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.MasonOperation;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.PathGraphInitialization;
 import com.Signalflowgraphs.Signalflowgraphs.Moduels.SourceDestinations;
-import com.Signalflowgraphs.Signalflowgraphs.Moduels.Vertex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +25,7 @@ public class Controller {
 
     private final MasonOperation mason;
 
+    @Autowired
     public Controller(AllForwardPathsInDirectedGraph allForwardPathsInDirectedGraph, AllCyclesInDirectedGraphJohnson allCyclesInDirectedGraphJohnson, MasonOperation mason) {
         this.allForwardPathsInDirectedGraph = allForwardPathsInDirectedGraph;
         this.allCyclesInDirectedGraphJohnson = allCyclesInDirectedGraphJohnson;
@@ -38,10 +38,6 @@ public class Controller {
         cycleGraphInitialization = new CycleGraphInitialization();
         pathGraphInitialization.graphInitialize(list);
         cycleGraphInitialization.graphInitialize(list);
-//        allForwardPathsInDirectedGraph = new AllForwardPathsInDirectedGraph();
-//        allCyclesInDirectedGraphJohnson = new AllCyclesInDirectedGraphJohnson();
-//        mason = new MasonOperation(allForwardPathsInDirectedGraph, allCyclesInDirectedGraphJohnson);
-
     }
 
 
@@ -53,8 +49,8 @@ public class Controller {
 
     @GetMapping ("/graph/individual/cycles")
     public List<List<Integer>> getIndividualCycles(){
-        allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
         System.out.println("------------------------------------------------------------------------------");
+        allCyclesInDirectedGraphJohnson.findAllCycles(cycleGraphInitialization);
         List<List<Integer>> allCycles = allCyclesInDirectedGraphJohnson.getAllCycles();
         List<Integer> allCyclesGains = allCyclesInDirectedGraphJohnson.getCyclesGains();
         System.out.println("Cycles:");
@@ -67,6 +63,7 @@ public class Controller {
     @GetMapping ("/graph/non/touching/cycles")
     public List<List<String>> getNonTouchingCycles(){
         System.out.println("------------------------------------------------------------------------------");
+        allCyclesInDirectedGraphJohnson.findAllCombinationsOfNNonTouchingCycles();
         List<List<String>> list1 = allCyclesInDirectedGraphJohnson.getAllCombinationsOfNNonTouchingCycles();
         int index = 2;
         for (List<String> stringList : list1) {
@@ -80,6 +77,8 @@ public class Controller {
 
     @GetMapping ("/graph/deltas")
     public List<Integer> getDeltas(){
+        System.out.println("------------------------------------------------------------------------------");
+        allCyclesInDirectedGraphJohnson.findAllCombinationsOfNNonTouchingCyclesGains();
         allCyclesInDirectedGraphJohnson.findAllCyclesNonTouchingPaths(allForwardPathsInDirectedGraph);
         allCyclesInDirectedGraphJohnson.findAllTwoNonTouchingCyclesPaths();
         List<Integer> deltas = mason.getDeltasOfPaths(allForwardPathsInDirectedGraph.getAllPaths().size());

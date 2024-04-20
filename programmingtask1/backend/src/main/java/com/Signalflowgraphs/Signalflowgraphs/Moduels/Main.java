@@ -7,21 +7,6 @@ import com.Signalflowgraphs.Signalflowgraphs.Moduels.Logic.MasonOperation;
 import java.util.*;
 
 public class Main {
-    private static void printCombinations(List<List<List<Vertex<Integer>>>> combinations) {
-        int combinationNumber = 1;
-        for (List<List<Vertex<Integer>>> combination : combinations) {
-            System.out.println("Combination " + combinationNumber + ":");
-            for (List<Vertex<Integer>> cycle : combination) {
-                System.out.print("Cycle: ");
-                for (Vertex<Integer> vertex : cycle) {
-                    System.out.print(vertex.getId() + " ");
-                }
-                System.out.println();
-            }
-            combinationNumber++;
-        }
-    }
-
     public static void main(String[] args) {
         SourceDestinations e1 = new SourceDestinations();
         SourceDestinations e2 = new SourceDestinations();
@@ -69,12 +54,16 @@ public class Main {
 
 //        get all cycles
         johnson.findAllCycles(cycleGraphInitialization);
-//        get all two non-touching cycles
-        johnson.findAllTwoNonTouchingCycles();
-//        get all cycles non touching paths
+////        get all two non-touching cycles
+//        johnson.findAllTwoNonTouchingCycles();
+//        get all cycles non-touching paths
         johnson.findAllCyclesNonTouchingPaths(paths);
 //        get all two non-touching cycles paths
         johnson.findAllTwoNonTouchingCyclesPaths();
+//        find all combinations of n non-touching cycles
+        johnson.findAllCombinationsOfNNonTouchingCycles();
+//        find all combinations of n non-touching cycles gains
+        johnson.findAllCombinationsOfNNonTouchingCyclesGains();
 
         MasonOperation masonOperation = new MasonOperation(paths, johnson);
 
@@ -100,13 +89,13 @@ public class Main {
 //            System.out.println();
 //        }
 
-        System.out.println("------------------------------------------------------------------------------");
-        List<List<Integer>> allTwoNonTouchingCycles = johnson.getTwoNonTouchingCycles();
-        List<Integer> allTwoNonTouchingCyclesGains = johnson.getTwoNonTouchingCyclesGains();
-        System.out.println("Two non touching cycles:");
-        for(int i = 0; i < allTwoNonTouchingCyclesGains.size(); i++){
-            System.out.println(allTwoNonTouchingCycles.get(i * 2) + ", " + allTwoNonTouchingCycles.get(i * 2 + 1) + " " + allTwoNonTouchingCyclesGains.get(i));
-        }
+//        System.out.println("------------------------------------------------------------------------------");
+//        List<List<Integer>> allTwoNonTouchingCycles = johnson.getTwoNonTouchingCycles();
+//        List<Integer> allTwoNonTouchingCyclesGains = johnson.getTwoNonTouchingCyclesGains();
+//        System.out.println("Two non touching cycles:");
+//        for(int i = 0; i < allTwoNonTouchingCyclesGains.size(); i++){
+//            System.out.println(allTwoNonTouchingCycles.get(i * 2) + ", " + allTwoNonTouchingCycles.get(i * 2 + 1) + " " + allTwoNonTouchingCyclesGains.get(i));
+//        }
         System.out.println("------------------------------------------------------------------------------");
         System.out.println("Cycles non touching paths:");
         List<List<List<Integer>>> allCyclesNonTouchingPaths = johnson.getAllCyclesNonTouchingPaths();
@@ -132,7 +121,6 @@ public class Main {
         System.out.println(masonOperation.getTransferFunctionValue());
 
         System.out.println("------------------------------------------------------------------------------");
-
         List<List<String>> list1 = johnson.getAllCombinationsOfNNonTouchingCycles();
         int index = 2;
         for (List<String> stringList : list1) {
@@ -142,7 +130,7 @@ public class Main {
                 System.out.println(s);
         }
         System.out.println("------------------------------------------------------------------------------");
-        List<List<Integer>> results = johnson.getAllCombinationsOfNNonTouchingCyclesGains();
+        List<List<Integer>> results = johnson.getAllNNonTouchingCyclesGains();
         index = 2;
         for (List<Integer> result : results){
             System.out.println("n = " + index);
@@ -150,5 +138,6 @@ public class Main {
             for (Integer integer : result)
                 System.out.println(integer);
         }
+        System.out.println("------------------------------------------------------------------------------");
     }
 }
