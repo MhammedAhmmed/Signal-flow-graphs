@@ -15,6 +15,7 @@
            :readonly="!selected">
           <input type="submit" value="submit" style="float: right; margin-right: 10px;">
         </form>
+<<<<<<< HEAD
         <button style="width: 150px; margin: auto; margin-top: 10px;" @click="solve">solve</button>
         <hr>
         <div class="results">
@@ -48,6 +49,10 @@
           <strong>Transfer Function</strong>
           {{ transferFunction }}
         </div>
+=======
+        <br>
+        <button @click="solve">solve</button>
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
       </div>
       <div class="drawing-window">
         <div class="tool-bar">
@@ -118,8 +123,12 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import axios from 'axios';
 
+=======
+//import axios from 'axios'
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
 
 export default {
   name: 'App',
@@ -349,6 +358,17 @@ export default {
         
     },
     async solve() {
+<<<<<<< HEAD
+=======
+      // axios.post(`http://localhost:8080/graph`, {
+      //   params: {
+      //     "list": this.graph,
+      //   }
+        
+      // }).then((res) => {
+      //   console.log(res);
+      // })
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
       await fetch("http://localhost:8080/graph", {
         method: "POST",
         headers: {
@@ -359,6 +379,7 @@ export default {
       }).catch((error) => {
         console.error("Fetch error:", error);
       });
+<<<<<<< HEAD
 
       await axios.get(`http://localhost:8080/graph/paths/${1}/${this.nodes.length}`).then((res => {
         this.allPaths = res.data;
@@ -416,6 +437,10 @@ export default {
       this.delta = null
       this.transferFunction = null
     },
+=======
+    },
+    
+>>>>>>> 76b9e46918475c1157e9f4238ba44379a7e35f86
   },
 }
 </script>
