@@ -1,17 +1,14 @@
 package com.example.programmingtask2;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math3.analysis.solvers.NewtonSolver;
+import org.apache.commons.math3.analysis.solvers.*;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import org.apache.commons.math3.analysis.solvers.NewtonRaphsonSolver;
-import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.*;
 
 @Service
 public class RouthHurwitzCriterion {
@@ -53,6 +50,9 @@ public class RouthHurwitzCriterion {
 
             j += 2;
         }
+        if(routhArray[1][0]==0){
+            routhArray[1][0] = 0.1;
+      }
         int firsttime=1;
         for(i = 2; i < n; ++i) {
             for(j = 0; j < m - 1; ++j) {
@@ -70,7 +70,7 @@ public class RouthHurwitzCriterion {
             else if(routhArray[i][0]==0){
                     routhArray[i][0] = 0.1;
               }
-        }
+           }
         for( i=0;i<n;i++) {
             System.out.println();
             for (j = 0; j < m; j++)
@@ -89,20 +89,24 @@ public class RouthHurwitzCriterion {
     }
 
     private boolean allPositive(List<Double> arr) {
-        Iterator var2 = arr.iterator();
+        if (arr == null || arr.isEmpty()) {
+            return false;
+        }
 
-        double num;
-        do {
-            if (!var2.hasNext()) {
-                return true;
+        Iterator<Double> iterator = arr.iterator();
+        Double prev = iterator.next();
+
+        while (iterator.hasNext()) {
+            Double num = iterator.next();
+            if (prev * num < 0.0) {
+                return false;
             }
+            prev = num; 
+        }
 
-            num = (Double)var2.next();
-        } while(!(num < 0.0));
-
-        this.findNumberOfRightHalfPlanePoles(arr);
-        return false;
+        return true;
     }
+
 
     public void findNumberOfRightHalfPlanePoles(List<Double> lst) {
         int count = 0;
@@ -132,28 +136,42 @@ public class RouthHurwitzCriterion {
         return true;
     }
 
-    public List<double[]> findRightSideRoots() {
+    public  List<double[]> findRightSideRoots() {
+
         List<double[]> rightSideRoots = new ArrayList<>();
 
-        // Create a polynomial from the coefficients
-        double[] coefficientsCopy = Arrays.copyOf(this.coefficients,this.coefficients.length);
-        PolynomialFunction polynomial = new PolynomialFunction(coefficientsCopy);
+        if (coefficients == null || coefficients.length == 0) {
+            System.err.println("Invalid coefficients array.");
+            return rightSideRoots;
+        }
 
-        // Use LaguerreSolver to find roots
+        PolynomialFunction polynomial = new PolynomialFunction(coefficients);
         LaguerreSolver solver = new LaguerreSolver();
-        Complex[] roots = solver.solveAllComplex(polynomial.getCoefficients(), 0.0);
+
+        // Reverse the coefficients array to pass them in ascending order of power
+        double[] reversedCoefficients = Arrays.copyOf(coefficients, coefficients.length);
+        ArrayUtils.reverse(reversedCoefficients);
+
+        Complex[] roots = solver.solveAllComplex(reversedCoefficients, 0.0);
+
         for (Complex root : roots) {
-           {
+            double d=root.getReal();
+            d=d*Math.pow(10,4);
+            d=Math.floor(d);
+            d=d/Math.pow(10,4);
+            if (d > 0.0) {
                 double[] rootPair = {root.getReal(), root.getImaginary()};
                 rightSideRoots.add(rootPair);
             }
         }
+
         return rightSideRoots;
+
     }
 
 
     public static void main(String[] args) {
-        double[] coefficients = {1,2,24,48,-50};
+        double[] coefficients = {-1,-1,-1};
         RouthHurwitzCriterion obj = new RouthHurwitzCriterion(coefficients);
         if (obj.isStable()) {
             System.out.println("The system is stable.");
