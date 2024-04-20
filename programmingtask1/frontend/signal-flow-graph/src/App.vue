@@ -28,6 +28,11 @@
             <li v-for="item in individualCycles" :key="item.id">{{ item }}</li>
           </ul>
           <hr>
+          <strong>Non-Touching Loops</strong>
+          <ul>
+            <li v-for="item in nonTouchingCycles" :key="item.id">{{ item }}</li>
+          </ul>
+          <hr>
           <strong>Δ</strong>
           {{ delta }}
           <hr>
@@ -90,7 +95,7 @@
                   fill: 'black',
                   x: item.x - 5,
                   y: item.y - 5,
-                  draggable: true,
+                  draggable: false,
                   width: 50,
                   height: 50,
                   fillAfterStrokeEnabled: true,
